@@ -1,0 +1,129 @@
+!!! 5
+%html
+  %head
+    %title Demo
+    %link{type: 'text/css', rel: 'stylesheet', href: 'lib/bootstrap/css/bootstrap.min.css'}
+    %link{type: 'text/css', rel: 'stylesheet', href: 'lib/bootstrap/css/bootstrap-responsive.min.css'}
+    %link{type: 'text/css', rel: 'stylesheet', href: 'lib/bootstrap/css/prettify.css'}
+    %link{type: 'text/css', rel: 'stylesheet', href: 'examples/demo.css'}
+    %script{type: 'text/javascript', src: 'lib/jquery.min.js'}
+    %script{type: 'text/javascript', src: 'src/jquery.in_field_label.js'}
+    %script{type: 'text/javascript', src: 'examples/demo.js'}
+  %body
+    %div.navbar.navbar-fixed-top
+      %div.navbar-inner
+        %div.container
+          %div.nav-collapse
+            %ul.nav
+              %li.active
+                %a Overview
+              %li
+                %a{href: 'https://github.com/chentianwen/jquery_in_field_label/issues'}
+                  Issues
+              %li
+                %a{href: 'https://github.com/chentianwen/jquery_in_field_label'}
+                  Fork me
+    %div.container
+      %div.page-header
+        %h1.title
+      %h2 Example
+      %div.row
+        %form
+          %div.span4
+            %div
+              %label{for: 'email_address'} Email address
+              %input{id: 'email_address', type: 'text', class: 'in_field_label'}
+      %h2 Requirement
+      %pre.prettyprint.linenums<
+        %ol.linenums><
+          %li.L0><
+            %span.tag><
+              &= "<script type='text/javascript' src='path_to/jquery.min.js' />"
+      %h2 Installation
+      %pre.prettyprint.linenums<
+        %ol.linenums><
+          %li.L0><
+            %span.tag><
+              &= "<script type='text/javascript' src='path_to/jquery.in_field_label.js' />"
+      %h2 Usage
+      %pre.prettyprint.linenums<
+        %ol.linenums><
+          %li.L0><
+            %span.tag><
+              &= "<input type='text' class='in_field_label' />"
+      %h4 OR
+      %pre.prettyprint.linenums<
+        %ol.linenums><
+          %li.L0><
+            %span.tag><
+              &= "<script type='text/javascript'>"
+          %li.L1><
+            %span.tag><
+              &= "  jQuery(function($){"
+          %li.L2><
+            %span.tag><
+              &= "    $('input').in_field_label()"
+          %li.L3><
+            %span.tag><
+              &= "  })"
+          %li.L4><
+            %span.tag><
+              &= "</script>"
+        
+      %h2 Options
+      %table.table.table-bordered.table-striped
+        %thead
+          %tr
+            %td Key
+            %td Description
+        %tbody
+          %tr
+            %td
+              %code align
+            %td
+              Values:
+              %code left
+              %code right
+          %tr
+            %td
+              %code padding
+            %td
+              Padding will be used with align to position the label.
+              %strong Number ONLY.
+          %tr
+            %td
+              %code opacity
+            %td
+              Opacity for the label when the input field is focused but has no value.
+          %tr
+            %td
+              %code opacity_min
+            %td
+              Min opacity for the label when the input field is focused but has no value.
+          %tr
+            %td
+              %code opacity_max
+            %td
+              Max opacity for the label when the input field is focused but has no value.
+          %tr
+            %td
+              %code tag_class
+            %td
+              For additional styling.
+          
+      .footer
+        %p
+          Built with the following technologies:
+        %p
+          %strong Design:
+          %a{href: 'http://twitter.github.com/bootstrap/'} bootstrap
+          %strong Script:
+          %a{href: 'http://jashkenas.github.com/coffee-script/'} coffee-script
+          %strong Test:
+          %a{href: 'http://pivotal.github.com/jasmine/'} jasmine
+          %strong Auto compile:
+          %a{href: 'https://github.com/guard/guard/'} guard
+          %strong Others:
+          %a{href: 'http://haml-lang.com/'} haml
+          ,
+          %a{href: 'http://compass-style.org/'} compass
