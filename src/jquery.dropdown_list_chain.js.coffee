@@ -11,8 +11,7 @@
  *
  *
  * usage:
- *  $parent.chain(/* settings = {} */)
- *  $child.chain(/* settings = {} */)
+ *  $element.chain(/* settings = {} */)
  * or
  *  $child.chainedTo($parent, /* settings = {} */)
 ###
@@ -32,28 +31,29 @@ jQuery ($) ->
       $(this).chainedTo $("##{$(this).data('target')}").get(0), settings
 
   $.fn.chainedTo = (parentElement, settings = {}) ->
-    return unless parentElement
+    # only works for HTML tag SELECT
+    return unless parentElement && $(parentElement).is('select') && $(this).is('select')
     settings = $.extend {}, $.chain.defaults, settings
     this.each ->
-      $self   = $ this
-      setup = $self.data 'jquery-dropdown-list-chain-setup'
-      setup = new DropdownChain(this, parentElement, settings) if typeof setup isnt DropdownChain
-      setup.update_settings(settings)
-      $self.data 'jquery-dropdown-list-chain-setup', setup
+      setup = $(this).data 'jquery-dropdown-list-chain-setup'
+      setup = new SelectChainSetup(this, parentElement, settings) if typeof setup isnt SelectChainSetup
+      $(this).data 'jquery-dropdown-list-chain-setup', setup.reload(settings)
 
-  class DropdownChain
+  class SelectChainSetup
     constructor: (element, parent, @settings) ->
       @$element = $ element
       @$clone = @$element.clone()
       @$parent = $ parent
-      @id = "#{parseInt(Math.random() * 10000)}#{new Date().getTime()}" # random integer with timestamp
+      # random integer with timestamp
+      @id = "#{parseInt(Math.random() * 10000)}#{new Date().getTime()}"
       @cleanup()
     cleanup: ->
       @$element.children().remove()
-      @$element.append "<option>#{@settings.include_blank.text}</option>" if @settings.include_blank
-    update_settings: (@settings) ->
-      @$parent.live "change.dropdown_chain.#{@id}", { chain: this }, (e) ->
+      @$element.append $("<option />").text(@settings.include_blank.text) if @settings.include_blank
+    reload: (@settings) ->
+      @$parent.unbind("change.dropdown_chain.#{@id}").live "change.dropdown_chain.#{@id}", { chain: this }, (e) ->
         e.data.chain.reload_with $(this).val()
+      this
     reload_with: (val) ->
       @cleanup()
       if @settings.ajax
