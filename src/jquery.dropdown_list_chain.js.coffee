@@ -23,6 +23,10 @@ jQuery ($) ->
       ajax: false
       include_blank:
         text: ' - '
+    ajax_defaults:
+      mapping: (data, $select) ->
+        $.each data, (index, record) ->
+          $select.append $('<option />').text(record.text).attr('value', record.value)
     version: '0.9'
 
   $.fn.chain = (settings = {}) ->
@@ -66,12 +70,9 @@ jQuery ($) ->
       else
         @load_local_options()
     load_remote_options: ->
-      # TODO: not support yet
-      [ $element, settings ] = [ @$element, @settings ]
-      $.ajax(@settings.ajax).success (data, textStatus, jqXHR) ->
-        $.each data, (index, record) ->
-          eval("var text = record.#{ settings.ajax.text }")
-          eval("var value = record.#{ settings.ajax.value }")
-          $element.append $('<option />').text(text).attr('value', value)
+      $element = @$element
+      ajax_settings = $.extend {}, $.chain.ajax_defaults, @settings.ajax
+      $.ajax(ajax_settings).success (data, textStatus, jqXHR) ->
+        ajax_settings.mapping(data, $element)
     load_local_options: ->
-      @$element.append @$clone.find("option[data-chain='#{val}']").clone() if @$clone
+      @$element.append @$clone.find("option[data-chain='#{ @parent.val() }']").clone() if @$clone

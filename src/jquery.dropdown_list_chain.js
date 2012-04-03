@@ -29,6 +29,13 @@
           text: ' - '
         }
       },
+      ajax_defaults: {
+        mapping: function(data, $select) {
+          return $.each(data, function(index, record) {
+            return $select.append($('<option />').text(record.text).attr('value', record.value));
+          });
+        }
+      },
       version: '0.9'
     };
     $.fn.chain = function(settings) {
@@ -94,20 +101,17 @@
       };
 
       SelectChainSetup.prototype.load_remote_options = function() {
-        var $element, settings, _ref;
-        _ref = [this.$element, this.settings], $element = _ref[0], settings = _ref[1];
-        return $.ajax(this.settings.ajax).success(function(data, textStatus, jqXHR) {
-          return $.each(data, function(index, record) {
-            eval("var text = record." + settings.ajax.text);
-            eval("var value = record." + settings.ajax.value);
-            return $element.append($('<option />').text(text).attr('value', value));
-          });
+        var $element, ajax_settings;
+        $element = this.$element;
+        ajax_settings = $.extend({}, $.chain.ajax_defaults, this.settings.ajax);
+        return $.ajax(ajax_settings).success(function(data, textStatus, jqXHR) {
+          return ajax_settings.mapping(data, $element);
         });
       };
 
       SelectChainSetup.prototype.load_local_options = function() {
         if (this.$clone) {
-          return this.$element.append(this.$clone.find("option[data-chain='" + val + "']").clone());
+          return this.$element.append(this.$clone.find("option[data-chain='" + (this.parent.val()) + "']").clone());
         }
       };
 
