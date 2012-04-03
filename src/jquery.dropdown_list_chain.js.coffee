@@ -8,48 +8,55 @@
  * 
  * Licensed under the MIT license:
  * http://www.opensource.org/licenses/MIT
+ *
+ *
+ * usage:
+ *  $parent.chain(/* settings = {} */)
+ *  $child.chain(/* settings = {} */)
+ * or
+ *  $child.chainedTo($parent, /* settings = {} */)
 ###
 jQuery ($) ->
   "use_strict"
 
-  $.fn.chainedTo = (parentElement, settings) ->
-    this.each ->
-      $self   = $(this)
-      setup = $self.data('chain-setup')
-      setup = new DropdownChain(this, parentElement) if typeof setup isnt DropdownChain
-      setup.update_settings = $.extend {}, $.chain.defaults, settings
-      $self.data 'chain-setup', setup.reload
-  $.fn.chain = (settings) ->
-    this.each ->
-      $("select[data-target=##{this.id}][data-toggle=chain]").chainedTo this, settings
-
   $.chain =
     defaults:
       ajax: false
-      include_blank: true
+      include_blank:
+        text: ' - '
     version: '0.9'
 
+  $.fn.chain = (settings = {}) ->
+    this.each ->
+      $("select[data-target='##{this.id}'][data-toggle=chain]").chainedTo this, settings
+      $(this).chainedTo $("##{$(this).data('target')}").get(0), settings
+
+  $.fn.chainedTo = (parentElement, settings = {}) ->
+    return unless parentElement
+    settings = $.extend {}, $.chain.defaults, settings
+    this.each ->
+      $self   = $ this
+      setup = $self.data 'jquery-dropdown-list-chain-setup'
+      setup = new DropdownChain(this, parentElement, settings) if typeof setup isnt DropdownChain
+      setup.update_settings(settings)
+      $self.data 'jquery-dropdown-list-chain-setup', setup
+
   class DropdownChain
-    constructor: (element, parent) ->
-      @$element = $(element)
+    constructor: (element, parent, @settings) ->
+      @$element = $ element
       @$clone = @$element.clone()
-      @$parent = $(parent)
+      @$parent = $ parent
       @id = "#{parseInt(Math.random() * 10000)}#{new Date().getTime()}" # random integer with timestamp
       @cleanup()
     cleanup: ->
       @$element.children().remove()
+      @$element.append "<option>#{@settings.include_blank.text}</option>" if @settings.include_blank
     update_settings: (@settings) ->
-      unbind_change_to_parent()
-      bind_change_to_parent()
-    bind_change_to_parent: ->
-      self = this
-      @$parent.bind "change.dropdown_chain.#{@id}", (e) ->
-        self.reload_with $(this).val()
-    unbind_change_to_parent: ->
-      @$parent.unbind "change.dropdown_chain.#{@id}"
+      @$parent.live "change.dropdown_chain.#{@id}", { chain: this }, (e) ->
+        e.data.chain.reload_with $(this).val()
     reload_with: (val) ->
       @cleanup()
-      @$element.append '<option />' if @settings.include_blank
       if @settings.ajax
+        # not support yet
       else
         @$element.append @$clone.find("option[data-chain='#{val}']").clone()
