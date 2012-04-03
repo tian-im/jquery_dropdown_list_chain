@@ -1,7 +1,8 @@
 (function() {
 
   jQuery(function($) {
-    return $('h1.title').text($.InFieldLabel.plugin_name + ' ' + $.InFieldLabel.version);
+    $('h1.title').text("jQuery Dropdown List Chain v" + $.chain.version);
+    return $('#country').chain();
   });
 
 }).call(this);
