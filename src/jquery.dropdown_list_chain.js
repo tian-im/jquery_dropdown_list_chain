@@ -9,13 +9,19 @@
  * 
  * Licensed under the MIT license:
  * http://www.opensource.org/licenses/MIT
+ *
+ *
+ * usage:
+ *  $element.chain(settings = {})
+ * or
+ *  $child.chainedTo($parent, settings = {})
 */
 
 (function() {
 
   jQuery(function($) {
     "use_strict";
-    var DropdownChain;
+    var SelectChainSetup;
     $.chain = {
       defaults: {
         ajax: false,
@@ -27,59 +33,85 @@
     };
     $.fn.chain = function(settings) {
       if (settings == null) settings = {};
+      if (!$(this).is('select')) return this;
       return this.each(function() {
-        return $("select[data-target=#" + this.id + "][data-toggle=chain]").chainedTo(this, settings);
+        $("select[data-target='#" + this.id + "'][data-toggle=chain]").chainedTo(this, settings);
+        return $(this).chainedTo(null, settings);
       });
     };
     $.fn.chainedTo = function(parentElement, settings) {
+      if (parentElement == null) parentElement = null;
       if (settings == null) settings = {};
+      if (!parentElement) parentElement = $("#" + ($(this).data('target'))).get(0);
+      if (!(parentElement && $(parentElement).is('select') && $(this).is('select'))) {
+        return this;
+      }
       settings = $.extend({}, $.chain.defaults, settings);
       return this.each(function() {
-        var $self, setup;
-        $self = $(this);
-        setup = $self.data('jquery-dropdown-list-chain-setup');
-        if (typeof setup !== DropdownChain) {
-          setup = new DropdownChain(this, parentElement, settings);
+        var setup;
+        setup = $(this).data('jquery-dropdown-list-chain-setup');
+        if (typeof setup !== SelectChainSetup) {
+          setup = new SelectChainSetup(this, parentElement, settings);
         }
-        setup.update_settings(settings);
-        return $self.data('jquery-dropdown-list-chain-setup', setup);
+        return $(this).data('jquery-dropdown-list-chain-setup', setup.update(settings));
       });
     };
-    return DropdownChain = (function() {
+    return SelectChainSetup = (function() {
 
-      function DropdownChain(element, parent, settings) {
+      function SelectChainSetup(element, parent, settings) {
         this.settings = settings;
         this.$element = $(element);
-        this.$clone = this.$element.clone();
+        if (!this.settings.ajax) this.$clone = this.$element.clone();
         this.$parent = $(parent);
         this.id = "" + (parseInt(Math.random() * 10000)) + (new Date().getTime());
         this.cleanup();
       }
 
-      DropdownChain.prototype.cleanup = function() {
+      SelectChainSetup.prototype.cleanup = function() {
         this.$element.children().remove();
         if (this.settings.include_blank) {
-          return this.$element.append("<option>" + this.settings.include_blank.text + "</option>");
+          return this.$element.append($('<option />').text(this.settings.include_blank.text));
         }
       };
 
-      DropdownChain.prototype.update_settings = function(settings) {
+      SelectChainSetup.prototype.update = function(settings) {
         this.settings = settings;
-        return this.$parent.live("change.dropdown_chain." + this.id, {
+        this.$parent.unbind("change.dropdown_chain." + this.id).live("change.dropdown_chain." + this.id, {
           chain: this
         }, function(e) {
           return e.data.chain.reload_with($(this).val());
         });
+        return this;
       };
 
-      DropdownChain.prototype.reload_with = function(val) {
+      SelectChainSetup.prototype.reload_with = function(val) {
         this.cleanup();
-        if (this.settings.ajax) {} else {
+        if (this.settings.ajax) {
+          return this.load_remote_options();
+        } else {
+          return this.load_local_options();
+        }
+      };
+
+      SelectChainSetup.prototype.load_remote_options = function() {
+        var $element, settings, _ref;
+        _ref = [this.$element, this.settings], $element = _ref[0], settings = _ref[1];
+        return $.ajax(this.settings.ajax).success(function(data, textStatus, jqXHR) {
+          return $.each(data, function(index, record) {
+            eval("var text = record." + settings.ajax.text);
+            eval("var value = record." + settings.ajax.value);
+            return $element.append($('<option />').text(text).attr('value', value));
+          });
+        });
+      };
+
+      SelectChainSetup.prototype.load_local_options = function() {
+        if (this.$clone) {
           return this.$element.append(this.$clone.find("option[data-chain='" + val + "']").clone());
         }
       };
 
-      return DropdownChain;
+      return SelectChainSetup;
 
     })();
   });
