@@ -21,41 +21,41 @@ jQuery ($) ->
   $.chain =
     defaults:
       ajax: false
+      ajax_mapping:
+        text: 'text'
+        value: 'value'
+        build_option: false # function(record) { option = $('<option />') }
       include_blank:
         text: ' - '
-    ajax_defaults:
-      mapping: (data, $select) ->
-        $.each data, (index, record) ->
-          $select.append $('<option />').text(record.text).attr('value', record.value)
     version: '0.9'
 
-  $.fn.chain = (settings = {}) ->
-    # only works for HTML tag SELECT
-    return this unless $(this).is('select')
+  $.fn.chain = (childElement = null, settings = {}) ->
     this.each ->
+      # only works for HTML tag SELECT
+      return true unless $(this).is('select')
       # locate the children
       $("select[data-target='##{ this.id }'][data-toggle=chain]").chainedTo this, settings
       # locate the parent
-      $(this).chainedTo null, settings
+      $(this).chainedTo settings
 
   $.fn.chainedTo = (parentElement = null, settings = {}) ->
     # only works for HTML tag SELECT
+    settings = parentElement and parentElement = null unless /select/i.test(parentElement['tagName']) # parentElement is not element
     parentElement = $("##{ $(this).data 'target' }").get(0) unless parentElement
     return this unless parentElement && $(parentElement).is('select') && $(this).is('select')
     settings = $.extend {}, $.chain.defaults, settings
     this.each ->
       setup = $(this).data 'jquery-dropdown-list-chain-setup'
-      setup = new SelectChainSetup(this, parentElement, settings) if typeof setup isnt SelectChainSetup
+      setup = new SelectChain(this, parentElement) if typeof setup isnt SelectChain
       $(this).data 'jquery-dropdown-list-chain-setup', setup.update(settings)
 
-  class SelectChainSetup
-    constructor: (element, parent, @settings) ->
-      @$element = $ element
-      @$clone = @$element.clone() unless @settings.ajax
-      @$parent = $ parent
+  class SelectChain
+    constructor: (element, parent) ->
+      @$element   = $ element
+      @$clone     = @$element.clone() # keep a copy
+      @$parent    = $ parent
       # random integer with timestamp
       @id = "#{ parseInt Math.random() * 10000 }#{ new Date().getTime() }"
-      @cleanup()
     cleanup: ->
       @$element.children().remove()
       @$element.append $('<option />').text(@settings.include_blank.text) if @settings.include_blank
@@ -71,8 +71,13 @@ jQuery ($) ->
         @load_local_options()
     load_remote_options: ->
       $element = @$element
-      ajax_settings = $.extend {}, $.chain.ajax_defaults, @settings.ajax
-      $.ajax(ajax_settings).success (data, textStatus, jqXHR) ->
-        ajax_settings.mapping(data, $element)
+      settings = @settings
+      $.ajax(settings.ajax).success (data, textStatus, jqXHR) ->
+        $.each data, (index, record) ->
+          if settings.ajax_mapping.build_option
+            $option = settings.ajax_mapping.build_option(record)
+          else
+            $option = $('<option />').text(record[settings.ajax_mapping.text]).attr('value', record[settings.ajax_mapping.value])
+          $element.append $option
     load_local_options: ->
       @$element.append @$clone.find("option[data-chain='#{ @parent.val() }']").clone() if @$clone
