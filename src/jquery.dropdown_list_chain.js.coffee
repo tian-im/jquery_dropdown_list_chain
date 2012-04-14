@@ -10,7 +10,24 @@
  * http://www.opensource.org/licenses/MIT
  *
  *
- * usage:
+ * Usage:
+ *
+ * HTML Markup:
+ * <select id='country' name='country'>
+ *   <option />
+ *   <option value='au'>Australia</option>
+ *   <option value='us'>United Status</option>
+ * </select>
+ * <select id='state' name='state'>
+ *   <option value='nsw' data-chain='au'>NSW</option>
+ *   <option value='act' data-chain='au'>ACT</option>
+ *   <option value='vic' data-chain='au'>VIC</option>
+ *   <option value='ny' data-chain='us'>NY</option>
+ *   <option value='ny' data-chain='us'>NY</option>
+ *   <option value='ny' data-chain='us'>NY</option>
+ * </select>
+ *
+ * javascript:
  *  $element.chain(settings = {})
  * or
  *  $child.chainedTo($parent, settings = {})
@@ -18,66 +35,109 @@
 jQuery ($) ->
   "use_strict"
 
+  # options
   $.chain =
     defaults:
       ajax: false
       ajax_mapping:
         text: 'text'
         value: 'value'
-        build_option: false # function(record) { option = $('<option />') }
+        build_option: false # function(record) { return $('<option />').text(record.text).attr('value', record.value) }
       include_blank:
         text: ' - '
+        value: ''
+      keep_last_value: true
     version: '0.9'
+    name: 'jQuery Dropdown List Chain'
+    attribute_name: 'jquery-dropdown-list-chain-setup'
+    event_name: 'change.jquery_dropdown_list_chain'
 
   $.fn.chain = (childElement = null, settings = {}) ->
     this.each ->
-      # only works for HTML tag SELECT
-      return true unless $(this).is('select')
-      # locate the children
-      $("select[data-target='##{ this.id }'][data-toggle=chain]").chainedTo this, settings
-      # locate the parent
-      $(this).chainedTo settings
+      childElement = $("select[data-target='##{ this.id }'][data-toggle=chain]") unless SelectChain.is_select childElement
+      $(childElement).chainedTo this, settings
 
   $.fn.chainedTo = (parentElement = null, settings = {}) ->
-    # only works for HTML tag SELECT
-    settings = parentElement and parentElement = null unless /select/i.test(parentElement['tagName']) # parentElement is not element
-    parentElement = $("##{ $(this).data 'target' }").get(0) unless parentElement
-    return this unless parentElement && $(parentElement).is('select') && $(this).is('select')
     settings = $.extend {}, $.chain.defaults, settings
     this.each ->
-      setup = $(this).data 'jquery-dropdown-list-chain-setup'
-      setup = new SelectChain(this, parentElement) if typeof setup isnt SelectChain
-      $(this).data 'jquery-dropdown-list-chain-setup', setup.update(settings)
+      return unless SelectChain.is_select this
+      # default parentElement
+      parentElement = $($(this).data 'target')[0] unless SelectChain.get_element parentElement
+      return unless parentElement
 
-  class SelectChain
-    constructor: (element, parent) ->
-      @$element   = $ element
-      @$clone     = @$element.clone() # keep a copy
-      @$parent    = $ parent
-      # random integer with timestamp
-      @id = "#{ parseInt Math.random() * 10000 }#{ new Date().getTime() }"
+      # update setup
+      setup = $(this).data $.chain.attribute_name
+      setup = new SelectChain($(parentElement), $(this)) unless typeof setup is SelectChain
+      $(this).data $.chain.attribute_name, setup.update(settings) # update setup
+
+  class $.SelectChain
+    @get_element: (obj) ->
+      if obj instanceof jQuery
+        obj[0]
+      else if obj instanceof Element
+        obj
+      else
+        null
+
+    @is_select: (obj) ->
+      return false unless obj = SelectChain.get_element(obj)
+      /select/i.test obj['tagName']
+
+    constructor: (@$parent, @$child) ->
+      @$clone         = @$child.clone() # keep a copy
+      @last_selected  = {}
+      @link_parent_and_child
+
+    link_parent_and_child: ->
+      @$parent.attr 'id', "chain_#{ parseInt Math.random() * 10000 }#{ new Date().getTime() }" unless @$parent.attr 'id'
+      @$child.data('toggle', 'chain').data 'target', "##{ @$parent.attr 'id' }"
+
+    update_last_selected: -> # on child: to save current value
+      @last_selected[ @$parent.val() ] = @$child.val() if @settings.keep_last_value
+
     cleanup: ->
-      @$element.children().remove()
-      @$element.append $('<option />').text(@settings.include_blank.text) if @settings.include_blank
+      @$child.children().remove()
+      include_blank = @settings.include_blank
+      @$child.append @build_option(include_blank.text, include_blank.value) if include_blank
+
+    build_option: (text, value) ->
+      $('<option />').text(text).attr 'value', value
+
     update: (@settings) ->
-      @$parent.unbind("change.dropdown_chain.#{ @id }").live "change.dropdown_chain.#{ @id }", { chain: this }, (e) ->
-        e.data.chain.reload_with $(this).val()
-      this
-    reload_with: (val) ->
+      @update_last_selected(); @reload(); @
+
+    reload: -> # on parent: to reload child options
       @cleanup()
       if @settings.ajax
         @load_remote_options()
       else
         @load_local_options()
+      @$child.val(@last_selected[ @$parent.val() ]) if @settings.keep_last_value
+
     load_remote_options: ->
-      $element = @$element
-      settings = @settings
-      $.ajax(settings.ajax).success (data, textStatus, jqXHR) ->
+      self    = @
+      mapping = @settings.ajax_mapping
+      $.ajax(@settings.ajax).success (data, textStatus, jqXHR) ->
         $.each data, (index, record) ->
-          if settings.ajax_mapping.build_option
-            $option = settings.ajax_mapping.build_option(record)
+          if mapping.build_option
+            self.$element.append mapping.build_option(record)
           else
-            $option = $('<option />').text(record[settings.ajax_mapping.text]).attr('value', record[settings.ajax_mapping.value])
-          $element.append $option
+            self.$element.append self.build_option(record[mapping.text], record[mapping.value])
+
     load_local_options: ->
-      @$element.append @$clone.find("option[data-chain='#{ @parent.val() }']").clone() if @$clone
+      @$child.append @$clone.find("option[data-chain='#{ @$parent.val() }']").clone() if @$clone
+
+  SelectChain = $.SelectChain
+
+  # trigger default
+  $('select[data-toggle=chain][data-target]').chainedTo();
+
+  # only setup the event once.
+  $('body').on $.chain.event_name, 'select', (e) ->
+    $target = $(e.target)
+    if $target.is '[data-toggle=chain][data-target]' # child?
+      $target.data($.chain.attribute_name).update_last_selected()
+    if $target.attr 'id'
+      # try to lookup the children dropdown list
+      $("select[data-toggle=chain][data-target='##{ $target.attr 'id' }']").each ->
+        $(this).data($.chain.attribute_name).reload()

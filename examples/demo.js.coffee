@@ -1,3 +1,4 @@
 jQuery ($) ->
-  $('h1.title').text "jQuery Dropdown List Chain v#{$.chain.version}"
-  $('#country').chain({ ajax: { url: './Demo.json.html' , dataType: 'json' } })
+  $('h1.title').text "#{ $.chain.name } v#{ $.chain.version }"
+  $('title').text "Demo - #{ $.chain.name }"
+  prettyPrint()

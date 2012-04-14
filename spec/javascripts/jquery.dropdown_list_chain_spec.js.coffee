@@ -1,14 +1,18 @@
 jQuery ($) ->
-	describe "InFieldLabel", ->
-		describe "#is_blank", ->
-      it "should be blank", ->
-        expect($.InFieldLabel.is_blank undefined).toBeTruthy()
-        expect($.InFieldLabel.is_blank null).toBeTruthy()
-        expect($.InFieldLabel.is_blank NaN).toBeTruthy()
-        expect($.InFieldLabel.is_blank "").toBeTruthy()
-        expect($.InFieldLabel.is_blank " ").toBeTruthy()
-        expect($.InFieldLabel.is_blank $('unknow')).toBeTruthy()
-        
+  describe "SelectChain", ->
+		describe "#is_select", ->
+      it "should say yes if element is select", ->
+        expect($.SelectChain.is_select $('<select />').get(0)).toBeTruthy()
+        expect($.SelectChain.is_select $('<select />')).toBeTruthy()
+
+
+      it "should say no unless element is select", ->
+        expect($.SelectChain.is_select $('<input />').get(0)).toBeFalsy()
+        expect($.SelectChain.is_select {}).toBeFalsy()
+
+    describe ".build_option", ->
+      it "should"
+      ###
       it "should NOT be blank", ->
         expect($.InFieldLabel.is_blank "not empty string").toBeFalsy()
         expect($.InFieldLabel.is_blank $(document.body)).toBeFalsy()
@@ -85,3 +89,4 @@ jQuery ($) ->
         $input.in_field_label()
         expect($input.data 'in_field_label_status').not.toEqual('all_set')
         expect($input).not.toHaveClass('in_field_label_class')
+    ###

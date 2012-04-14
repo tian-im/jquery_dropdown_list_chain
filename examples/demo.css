@@ -1,12 +1,4 @@
 /* line 1, demo.scss */
-body {
-  padding-top: 90px;
-  background-color: white;
-}
-
-/* line 6, demo.scss */
-.footer {
-  margin-top: 45px;
-  padding: 35px 0 36px;
-  border-top: 1px solid #E5E5E5;
+.grey {
+  color: #999999;
 }

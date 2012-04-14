@@ -1,104 +1,115 @@
+- # helpers
+- codes = lambda do |lines_of_code, lang = 'lang-html'|
+  %pre.prettyprint.linenums
+    %code{ class: lang }
+      :preserve
+        #{ lines_of_code.gsub(/</, '&lt;').gsub(/>/, '&gt;') }
 !!! 5
 %html
   %head
     %title Demo
-    %link{type: 'text/css', rel: 'stylesheet', href: 'lib/bootstrap/css/bootstrap.min.css'}
-    %link{type: 'text/css', rel: 'stylesheet', href: 'lib/bootstrap/css/bootstrap-responsive.min.css'}
-    %link{type: 'text/css', rel: 'stylesheet', href: 'lib/bootstrap/css/prettify.css'}
-    %link{type: 'text/css', rel: 'stylesheet', href: 'examples/demo.css'}
-    %script{type: 'text/javascript', src: 'lib/jquery.min.js'}
-    %script{type: 'text/javascript', src: 'src/jquery.dropdown_list_chain.js'}
-    %script{type: 'text/javascript', src: 'examples/demo.js'}
-  %body
-    %div.navbar.navbar-fixed-top
-      %div.navbar-inner
-        %div.container
-          %div.nav-collapse
+    - %w( http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css http://twitter.github.com/bootstrap/assets/css/bootstrap.css http://twitter.github.com/bootstrap/assets/css/docs.css http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css examples/demo.css ).each do |css_url|
+      %link{ type: 'text/css', rel: 'stylesheet', href: css_url }
+    - %w( http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js src/jquery.dropdown_list_chain.js examples/demo.js http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.js ).each do |js_url|
+      %script{ type: 'text/javascript', src: js_url }
+  %body{ 'data-spy' => 'scroll' }
+    .navbar.navbar-fixed-top
+      .navbar-inner
+        .container
+          .nav-collapse
             %ul.nav
               %li.active
                 %a Overview
+              %li.divider-vertical
               %li
-                %a{href: 'https://github.com/chentianwen/jquery_dropdown_list_chain/issues'}
-                  Issues
+                %a{ href: 'https://github.com/chentianwen/jquery_dropdown_list_chain/issues', target: '_blank' } Issues &amp; Feedbacks
               %li
-                %a{href: 'https://github.com/chentianwen/jquery_dropdown_list_chain'}
-                  Fork me
-    %div.container
-      %div.page-header
+                %a{ href: 'https://github.com/chentianwen/jquery_dropdown_list_chain', target: '_blank' } Fork me
+    .container
+      .page-header
         %h1.title
-      %h2 Example
-      %div.row
-        %form
-          %div.span4
-            %div
-              %label{for: 'country'} Country
-              %select{id: 'country', name: 'country'}
-                %option
-                %option{value: 'au'} Australia
-                %option{value: 'cn'} China
-              %label{for: 'state'} State
-              %select{id: 'state', name: 'state', 'data-toggle' => 'chain', 'data-target' => '#country'}
-                %option
-                %option{value: 'nsw', 'data-chain' => 'au'} NSW
-                %option{value: 'act', 'data-chain' => 'au'} ACT
-                %option{value: 'vic', 'data-chain' => 'au'} VIC
-                %option{value: 'qld', 'data-chain' => 'au'} QLD
-                %option{value: 'wa', 'data-chain' => 'au'} WA
-                %option{value: 'nt', 'data-chain' => 'au'} NT
-                %option{value: 'gz', 'data-chain' => 'cn'} Guang Dong
-                %option{value: 'sh', 'data-chain' => 'cn'} Shang Hai
-                %option{value: 'bj', 'data-chain' => 'cn'} Bei Jing
-
-      %h2 Requirement
-      %pre.prettyprint.linenums<
-        %ol.linenums><
-          %li.L0><
-            %span.tag><
-              &= "<script type='text/javascript' src='url_to/jquery.min.js' />"
-      %h2 Installation
-      %pre.prettyprint.linenums<
-        %ol.linenums><
-          %li.L0><
-            %span.tag><
-              &= "<script type='text/javascript' src='url_to/jquery.dropdown_list_chain.js' />"
-      %h2 Usage
-      %pre.prettyprint.linenums<
-        %ol.linenums><
-          %li.L0><
-            %span.tag><
-              &= "<select class='root dropdown_list_chain' />"
-      %h4 OR
-      %pre.prettyprint.linenums<
-        %ol.linenums><
-          %li.L0><
-            %span.tag><
-              &= "<script type='text/javascript'>"
-          %li.L1><
-            %span.tag><
-              &= "  jQuery(function($){"
-          %li.L2><
-            %span.tag><
-              &= "    $('select.root').chain()"
-          %li.L3><
-            %span.tag><
-              &= "  })"
-          %li.L4><
-            %span.tag><
-              &= "</script>"
-          
+      .row
+        .span3.column
+          %h3 About
+          %p Some description here
+          %h3 Jasmine Test
+          %p
+            %a{ href: 'SpecRunner.html', target: '_blank'} Click to open the test page.
+        .span9.column
+          #demo
+            %h2 Demo
+            %div.row
+              %form
+                %div.span4
+                  %div
+                    %label{ for: 'country' } Country
+                    %select.chain{ id: 'country', name: 'country' }
+                      %option
+                      %option{ value: 'au', selected: 'selected' } Australia
+                      %option{ value: 'cn' } China
+                    %label{ for: 'city' } Major City
+                    %select{ id: 'city', name: 'city', 'data-toggle' => 'chain', 'data-target' => '#country' }
+                      %option
+                      %option{ value: 'syd', 'data-chain' => 'au' } Sydney
+                      %option{ value: 'mel', 'data-chain' => 'au' } Melbourne
+                      %option{ value: 'bne', 'data-chain' => 'au' } Brisbane
+                      %option{ value: 'adl', selected: 'selected', 'data-chain' => 'au' } Adelaide
+                      %option{ value: 'bj', 'data-chain' => 'cn' } Bei Jing
+                      %option{ value: 'sh', 'data-chain' => 'cn' } Shang Hai
+                      %option{ value: 'gz', 'data-chain' => 'cn' } Guang Zhou
+                    %label{ for: 'wildlife' } Wildlife
+                    %select{ id: 'wildlife', name: 'wildlife', 'data-toggle' => 'chain', 'data-target' => '#country' }
+                      %option
+                      %option{ value: 'koala', 'data-chain' => 'au' } Koala
+                      %option{ value: 'kangaroo', 'data-chain' => 'au' } Kangaroo
+                      %option{ value: 'panda', 'data-chain' => 'cn' } Panda
+                      %option{ value: 'monkey', 'data-chain' => 'cn' } Snub-nosed Monkey
+          #requirement
+            %h2
+              Requirement
+              %small Latest version of jQuery
+            - codes.call "<script type='text/javascript' src='url_to/jquery.min.js' />"
+          #installation
+            %h2 Installation
+            - codes.call "<script type='text/javascript' src='url_to/jquery.dropdown_list_chain.js' />"
+          #usage
+            %h2 Usage
+            %h3 Local
+            %strong
+              Option 1
+            %p No javascript is needed if you follow below markup.
+            - codes.call "<select id='...' data-target='\#{ parent_css_selector }' data-toggle='chain'>\n  <option value='...' data-chain='...'> ... </option>\n</select>"
+            %strong Code Example
+            - codes.call "<select id='country'>\n  <option value='au'> Australia </option>\n  <option value='cn'> China </option>\n</select>\n\n<select id='city' data-target='#country' data-toggle='chain'>\n  <option value='syd' data-chain='au'> Sydney </option>\n  <option value='mel' data-chain='au'> Melbourne </option>\n  <option value='bj' data-chain='cn'> Bei Jing </option>\n  <option value='gz' data-chain='cn'> Guang Zhou </option>\n</select>"
+            %strong
+              Option 2
+              %small Manual Javascript Setup.
+            - codes.call "<select "
+            .alert.alert-info
+              %strong Please note:
+              the parent doesn't need to be a dropdown list, it could be input field, checkbox, radiobox or even a textarea.
       .footer
         %p
-          Built with the following technologies:
+          Licensed under the
+          %a{ href: 'http://www.opensource.org/licenses/MIT' } MIT License
         %p
-          %strong Design:
-          %a{href: 'http://twitter.github.com/bootstrap/'} bootstrap
-          %strong Script:
-          %a{href: 'http://jashkenas.github.com/coffee-script/'} coffee-script
-          %strong Test:
-          %a{href: 'http://pivotal.github.com/jasmine/'} jasmine
-          %strong Auto compile:
-          %a{href: 'https://github.com/guard/guard/'} guard
-          %strong Others:
-          %a{href: 'http://haml-lang.com/'} haml
-          ,
-          %a{href: 'http://compass-style.org/'} compass
+          Powered by the following technologies:
+        .row
+          .span3
+            %h4 Scripting:
+            %a{ href: 'http://jashkenas.github.com/coffee-script/', target: '_blank' } coffee-script
+          .span3
+            %h4 Test:
+            %a{ href: 'http://pivotal.github.com/jasmine/', target: '_blank' } jasmine
+          .span3
+            %h4 Design:
+            %a{ href: 'http://twitter.github.com/bootstrap/', target: '_blank' } bootstrap
+          .span3
+            %h4 Others:
+            %a{ href: 'https://github.com/guard/guard/', target: '_blank' } guard
+            ,
+            %a{ href: 'http://haml-lang.com/', target: '_blank' } haml
+            ,
+            %a{ href: 'http://compass-style.org/', target: '_blank' } compass
+            ,
+            %a{ href: 'http://code.google.com/p/google-code-prettify/', target: '_blank' } google-code-prettify
