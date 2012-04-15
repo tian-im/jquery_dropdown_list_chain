@@ -47,72 +47,129 @@
           </p>
         </div>
         <div class='span9 column'>
-          <div id='demo'>
-            <h2>Demo</h2>
-            <div class='row'>
-              <form>
-                <div class='span4'>
-                  <div>
-                    <label for='country'>Country</label>
-                    <select class='chain' id='country' name='country'>
-                      <option></option>
-                      <option selected='selected' value='au'>Australia</option>
-                      <option value='cn'>China</option>
-                    </select>
-                    <label for='city'>Major City</label>
-                    <select data-target='#country' data-toggle='chain' id='city' name='city'>
-                      <option></option>
-                      <option data-chain='au' value='syd'>Sydney</option>
-                      <option data-chain='au' value='mel'>Melbourne</option>
-                      <option data-chain='au' value='bne'>Brisbane</option>
-                      <option data-chain='au' selected='selected' value='adl'>Adelaide</option>
-                      <option data-chain='cn' value='bj'>Bei Jing</option>
-                      <option data-chain='cn' value='sh'>Shang Hai</option>
-                      <option data-chain='cn' value='gz'>Guang Zhou</option>
-                    </select>
-                    <label for='wildlife'>Wildlife</label>
-                    <select data-target='#country' data-toggle='chain' id='wildlife' name='wildlife'>
-                      <option></option>
-                      <option data-chain='au' value='koala'>Koala</option>
-                      <option data-chain='au' value='kangaroo'>Kangaroo</option>
-                      <option data-chain='cn' value='panda'>Panda</option>
-                      <option data-chain='cn' value='monkey'>Snub-nosed Monkey</option>
-                    </select>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
           <div id='requirement'>
             <h2>
               Requirement
               <small>Latest version of jQuery</small>
             </h2>
-<pre class='prettyprint linenums'><code class='lang-html'>&lt;script type='text/javascript' src='url_to/jquery.min.js' /&gt;</code></pre>
+<pre class='prettyprint linenums'>&lt;script type='text/javascript' src='url_to/jquery.min.js' /&gt;</pre>
           </div>
           <div id='installation'>
             <h2>Installation</h2>
-<pre class='prettyprint linenums'><code class='lang-html'>&lt;script type='text/javascript' src='url_to/jquery.dropdown_list_chain.js' /&gt;</code></pre>
+<pre class='prettyprint linenums'>&lt;script type='text/javascript' src='url_to/jquery.dropdown_list_chain.js' /&gt;</pre>
           </div>
+          <div id='demo'></div>
           <div id='usage'>
             <h2>Usage</h2>
-            <h3>Local</h3>
-            <strong>
-              Option 1
-            </strong>
-            <p>No javascript is needed if you follow below markup.</p>
-<pre class='prettyprint linenums'><code class='lang-html'>&lt;select id='...' data-target='#{ parent_css_selector }' data-toggle='chain'&gt;&#x000A;  &lt;option value='...' data-chain='...'&gt; ... &lt;/option&gt;&#x000A;&lt;/select&gt;</code></pre>
-            <strong>Code Example</strong>
-<pre class='prettyprint linenums'><code class='lang-html'>&lt;select id='country'&gt;&#x000A;  &lt;option value='au'&gt; Australia &lt;/option&gt;&#x000A;  &lt;option value='cn'&gt; China &lt;/option&gt;&#x000A;&lt;/select&gt;&#x000A;&#x000A;&lt;select id='city' data-target='#country' data-toggle='chain'&gt;&#x000A;  &lt;option value='syd' data-chain='au'&gt; Sydney &lt;/option&gt;&#x000A;  &lt;option value='mel' data-chain='au'&gt; Melbourne &lt;/option&gt;&#x000A;  &lt;option value='bj' data-chain='cn'&gt; Bei Jing &lt;/option&gt;&#x000A;  &lt;option value='gz' data-chain='cn'&gt; Guang Zhou &lt;/option&gt;&#x000A;&lt;/select&gt;</code></pre>
-            <strong>
-              Option 2
-              <small>Manual Javascript Setup.</small>
-            </strong>
-<pre class='prettyprint linenums'><code class='lang-html'>&lt;select</code></pre>
+<pre class='prettyprint linenums'>&lt;script type='text/javascript'&gt;&#x000A;  jQuery(function($) {&#x000A;    $(chainer_selector).chain( /* { chainee_selector | jQuery | Element } [ , options = {} ] */ );&#x000A;    $(chainee_selector).chainedTo( /* { chainer_selector | jQuery | Element } [ , options = {} ] */ );&#x000A;  });&#x000A;&lt;/script&gt;</pre>
             <div class='alert alert-info'>
-              <strong>Please note:</strong>
-              the parent doesn't need to be a dropdown list, it could be input field, checkbox, radiobox or even a textarea.
+              <strong>NOTE:</strong>
+              the chainee must be HTML Select element.
             </div>
+            <h3>Local</h3>
+            <h4>Option 1</h4>
+            <p>No javascript is needed if you follow below markup.</p>
+<pre class='prettyprint linenums'>&lt;!-- Chainee --&gt;&#x000A;&lt;select id='...' data-target='#{ parent_css_selector }' data-toggle='chain'&gt;&#x000A;  &lt;option value='...' data-chain='...'&gt; ... &lt;/option&gt;&#x000A;&lt;/select&gt;</pre>
+            <h4>Code Example</h4>
+<pre class='prettyprint linenums'>&lt;!-- Chainer --&gt;&#x000A;&lt;select id='country'&gt;&#x000A;  &lt;option value='au'&gt; Australia &lt;/option&gt;&#x000A;  &lt;option value='cn'&gt; China &lt;/option&gt;&#x000A;&lt;/select&gt;&#x000A;&#x000A;&lt;!-- Chainee --&gt;&#x000A;&lt;select id='city' data-target='#country' data-toggle='chain'&gt;&#x000A;  &lt;option value='syd' data-chain='au'&gt; Sydney &lt;/option&gt;&#x000A;  &lt;option value='mel' data-chain='au'&gt; Melbourne &lt;/option&gt;&#x000A;  &lt;option value='bj' data-chain='cn'&gt; Bei Jing &lt;/option&gt;&#x000A;  &lt;option value='gz' data-chain='cn'&gt; Guang Zhou &lt;/option&gt;&#x000A;&lt;/select&gt;</pre>
+            <h4>Demo</h4>
+            <div class='well'>
+              <div class='span3'>
+                <label for='country'>Country</label>
+                <select id='country' name='country'>
+                  <option></option>
+                  <option selected='selected' value='au'>Australia</option>
+                  <option value='cn'>China</option>
+                </select>
+              </div>
+              <div class='span3'>
+                <label for='city'>Major City</label>
+                <select data-target='#country' data-toggle='chain' id='city' name='city'>
+                  <option></option>
+                  <option data-chain='au' value='syd'>Sydney</option>
+                  <option data-chain='au' value='mel'>Melbourne</option>
+                  <option data-chain='au' value='bne'>Brisbane</option>
+                  <option data-chain='au' selected='selected' value='adl'>Adelaide</option>
+                  <option data-chain='cn' value='bj'>Bei Jing</option>
+                  <option data-chain='cn' value='sh'>Shang Hai</option>
+                  <option data-chain='cn' value='gz'>Guang Zhou</option>
+                </select>
+              </div>
+              <div class='span3'>
+                <label for='wildlife'>Wildlife</label>
+                <select data-target='#country' data-toggle='chain' id='wildlife' name='wildlife'>
+                  <option></option>
+                  <option data-chain='au' value='koala'>Koala</option>
+                  <option data-chain='au' value='kangaroo'>Kangaroo</option>
+                  <option data-chain='cn' value='panda'>Panda</option>
+                  <option data-chain='cn' value='monkey'>Snub-nosed Monkey</option>
+                </select>
+              </div>
+              <div class='clear'></div>
+            </div>
+            <h4>Option 2</h4>
+            <p>Manual Javascript setup.</p>
+            <div class='alert alert-info'>
+              <strong>NOTE:</strong>
+              the chainer doesn't need to be a dropdown list, it could be input field, checkbox, radiobox or even a textarea.
+            </div>
+<pre class='prettyprint linenums'>&lt;!-- Chainer --&gt;&#x000A;&lt;input id='species' /&gt;&#x000A;&#x000A;&lt;!-- Chainee --&gt;&#x000A;&lt;select id='breed'&gt;&#x000A;  &lt;option value='' data-chain='dog'&gt; Sydney &lt;/option&gt;&#x000A;  &lt;option value='mel' data-chain='dog'&gt; Melbourne &lt;/option&gt;&#x000A;  &lt;option value='bj' data-chain='cat'&gt; Bei Jing &lt;/option&gt;&#x000A;  &lt;option value='gz' data-chain='cat'&gt; Guang Zhou &lt;/option&gt;&#x000A;&lt;/select&gt;&#x000A;&#x000A;&lt;script type='text/javascript'&gt;&#x000A;  jQuery(function($) {&#x000A;    $('#country').chain('#city');&#x000A;    // or $('#city').chainedTo($('#country'));&#x000A;  });&#x000A;&lt;/script&gt;</pre>
+            <h4>Demo</h4>
+            <div class='well'>
+              <div class='span3'>
+                <label for='species'>Species</label>
+                <input id='species' name='species' value='cat' />
+                <small>try to fill in 'dog' or 'cat'</small>
+              </div>
+              <div class='span3'>
+                <label for='breed'>Breed</label>
+                <select id='breed' name='breed'>
+                  <option></option>
+                  <option data-chain='dog' value='siberian_husky'>Siberian Husky</option>
+                  <option data-chain='dog' selected='selected' value='shetland_sheepdog'>Shetland Sheepdog</option>
+                  <option data-chain='dog' value='boxer'>Boxer</option>
+                  <option data-chain='cat' value='persian'>Persian</option>
+                  <option data-chain='cat' value='egyptian_mau'>Egyptian Mau</option>
+                </select>
+              </div>
+              <div class='clear'></div>
+            </div>
+            <h4>Demo</h4>
+            <div class='well'>
+              <div class='span3'>
+                <label for='country'>Country</label>
+                <select class='chain' id='country' name='country'>
+                  <option></option>
+                  <option selected='selected' value='au'>Australia</option>
+                  <option value='cn'>China</option>
+                </select>
+              </div>
+              <div class='span3'>
+                <label for='city'>Major City</label>
+                <select data-target='#country' data-toggle='chain' id='city' name='city'>
+                  <option></option>
+                  <option data-chain='au' value='syd'>Sydney</option>
+                  <option data-chain='au' value='mel'>Melbourne</option>
+                  <option data-chain='au' value='bne'>Brisbane</option>
+                  <option data-chain='au' selected='selected' value='adl'>Adelaide</option>
+                  <option data-chain='cn' value='bj'>Bei Jing</option>
+                  <option data-chain='cn' value='sh'>Shang Hai</option>
+                  <option data-chain='cn' value='gz'>Guang Zhou</option>
+                </select>
+              </div>
+              <div class='span3'>
+                <label for='wildlife'>Wildlife</label>
+                <select data-target='#country' data-toggle='chain' id='wildlife' name='wildlife'>
+                  <option></option>
+                  <option data-chain='au' value='koala'>Koala</option>
+                  <option data-chain='au' value='kangaroo'>Kangaroo</option>
+                  <option data-chain='cn' value='panda'>Panda</option>
+                  <option data-chain='cn' value='monkey'>Snub-nosed Monkey</option>
+                </select>
+              </div>
+              <div class='clear'></div>
+            </div>
+            <h3>Remote</h3>
           </div>
         </div>
       </div>

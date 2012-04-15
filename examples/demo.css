@@ -2,3 +2,8 @@
 .grey {
   color: #999999;
 }
+
+/* line 4, demo.scss */
+.clear {
+  clear: both;
+}

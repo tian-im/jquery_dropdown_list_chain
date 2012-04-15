@@ -1,9 +1,8 @@
 - # helpers
-- codes = lambda do |lines_of_code, lang = 'lang-html'|
+- codes = lambda do |lines_of_code|
   %pre.prettyprint.linenums
-    %code{ class: lang }
-      :preserve
-        #{ lines_of_code.gsub(/</, '&lt;').gsub(/>/, '&gt;') }
+    :preserve
+      #{ lines_of_code.gsub(/</, '&lt;').gsub(/>/, '&gt;') }
 !!! 5
 %html
   %head
@@ -36,34 +35,6 @@
           %p
             %a{ href: 'SpecRunner.html', target: '_blank'} Click to open the test page.
         .span9.column
-          #demo
-            %h2 Demo
-            %div.row
-              %form
-                %div.span4
-                  %div
-                    %label{ for: 'country' } Country
-                    %select.chain{ id: 'country', name: 'country' }
-                      %option
-                      %option{ value: 'au', selected: 'selected' } Australia
-                      %option{ value: 'cn' } China
-                    %label{ for: 'city' } Major City
-                    %select{ id: 'city', name: 'city', 'data-toggle' => 'chain', 'data-target' => '#country' }
-                      %option
-                      %option{ value: 'syd', 'data-chain' => 'au' } Sydney
-                      %option{ value: 'mel', 'data-chain' => 'au' } Melbourne
-                      %option{ value: 'bne', 'data-chain' => 'au' } Brisbane
-                      %option{ value: 'adl', selected: 'selected', 'data-chain' => 'au' } Adelaide
-                      %option{ value: 'bj', 'data-chain' => 'cn' } Bei Jing
-                      %option{ value: 'sh', 'data-chain' => 'cn' } Shang Hai
-                      %option{ value: 'gz', 'data-chain' => 'cn' } Guang Zhou
-                    %label{ for: 'wildlife' } Wildlife
-                    %select{ id: 'wildlife', name: 'wildlife', 'data-toggle' => 'chain', 'data-target' => '#country' }
-                      %option
-                      %option{ value: 'koala', 'data-chain' => 'au' } Koala
-                      %option{ value: 'kangaroo', 'data-chain' => 'au' } Kangaroo
-                      %option{ value: 'panda', 'data-chain' => 'cn' } Panda
-                      %option{ value: 'monkey', 'data-chain' => 'cn' } Snub-nosed Monkey
           #requirement
             %h2
               Requirement
@@ -72,22 +43,98 @@
           #installation
             %h2 Installation
             - codes.call "<script type='text/javascript' src='url_to/jquery.dropdown_list_chain.js' />"
+          #demo
           #usage
             %h2 Usage
-            %h3 Local
-            %strong
-              Option 1
-            %p No javascript is needed if you follow below markup.
-            - codes.call "<select id='...' data-target='\#{ parent_css_selector }' data-toggle='chain'>\n  <option value='...' data-chain='...'> ... </option>\n</select>"
-            %strong Code Example
-            - codes.call "<select id='country'>\n  <option value='au'> Australia </option>\n  <option value='cn'> China </option>\n</select>\n\n<select id='city' data-target='#country' data-toggle='chain'>\n  <option value='syd' data-chain='au'> Sydney </option>\n  <option value='mel' data-chain='au'> Melbourne </option>\n  <option value='bj' data-chain='cn'> Bei Jing </option>\n  <option value='gz' data-chain='cn'> Guang Zhou </option>\n</select>"
-            %strong
-              Option 2
-              %small Manual Javascript Setup.
-            - codes.call "<select "
+            - codes.call "<script type='text/javascript'>\n  jQuery(function($) {\n    $(chainer_selector).chain( /* { chainee_selector | jQuery | Element } [ , options = {} ] */ );\n    $(chainee_selector).chainedTo( /* { chainer_selector | jQuery | Element } [ , options = {} ] */ );\n  });\n</script>"
             .alert.alert-info
-              %strong Please note:
-              the parent doesn't need to be a dropdown list, it could be input field, checkbox, radiobox or even a textarea.
+              %strong NOTE:
+              the chainee must be HTML Select element.
+            %h3 Local
+            %h4 Option 1
+            %p No javascript is needed if you follow below markup.
+            - codes.call "<!-- Chainee -->\n<select id='...' data-target='\#{ parent_css_selector }' data-toggle='chain'>\n  <option value='...' data-chain='...'> ... </option>\n</select>"
+            %h4 Code Example
+            - codes.call "<!-- Chainer -->\n<select id='country'>\n  <option value='au'> Australia </option>\n  <option value='cn'> China </option>\n</select>\n\n<!-- Chainee -->\n<select id='city' data-target='#country' data-toggle='chain'>\n  <option value='syd' data-chain='au'> Sydney </option>\n  <option value='mel' data-chain='au'> Melbourne </option>\n  <option value='bj' data-chain='cn'> Bei Jing </option>\n  <option value='gz' data-chain='cn'> Guang Zhou </option>\n</select>"
+            %h4 Demo
+            .well
+              .span3
+                %label{ for: 'country' } Country
+                %select{ id: 'country', name: 'country' }
+                  %option
+                  %option{ value: 'au', selected: 'selected' } Australia
+                  %option{ value: 'cn' } China
+              .span3
+                %label{ for: 'city' } Major City
+                %select{ id: 'city', name: 'city', 'data-toggle' => 'chain', 'data-target' => '#country' }
+                  %option
+                  %option{ value: 'syd', 'data-chain' => 'au' } Sydney
+                  %option{ value: 'mel', 'data-chain' => 'au' } Melbourne
+                  %option{ value: 'bne', 'data-chain' => 'au' } Brisbane
+                  %option{ value: 'adl', selected: 'selected', 'data-chain' => 'au' } Adelaide
+                  %option{ value: 'bj', 'data-chain' => 'cn' } Bei Jing
+                  %option{ value: 'sh', 'data-chain' => 'cn' } Shang Hai
+                  %option{ value: 'gz', 'data-chain' => 'cn' } Guang Zhou
+              .span3
+                %label{ for: 'wildlife' } Wildlife
+                %select{ id: 'wildlife', name: 'wildlife', 'data-toggle' => 'chain', 'data-target' => '#country' }
+                  %option
+                  %option{ value: 'koala', 'data-chain' => 'au' } Koala
+                  %option{ value: 'kangaroo', 'data-chain' => 'au' } Kangaroo
+                  %option{ value: 'panda', 'data-chain' => 'cn' } Panda
+                  %option{ value: 'monkey', 'data-chain' => 'cn' } Snub-nosed Monkey
+              .clear
+            %h4 Option 2
+            %p Manual Javascript setup.
+            .alert.alert-info
+              %strong NOTE:
+              the chainer doesn't need to be a dropdown list, it could be input field, checkbox, radiobox or even a textarea.
+            - codes.call "<!-- Chainer -->\n<input id='species' />\n\n<!-- Chainee -->\n<select id='breed'>\n  <option value='' data-chain='dog'> Sydney </option>\n  <option value='mel' data-chain='dog'> Melbourne </option>\n  <option value='bj' data-chain='cat'> Bei Jing </option>\n  <option value='gz' data-chain='cat'> Guang Zhou </option>\n</select>\n\n<script type='text/javascript'>\n  jQuery(function($) {\n    $('#country').chain('#city');\n    // or $('#city').chainedTo($('#country'));\n  });\n</script>"
+            %h4 Demo
+            .well
+              .span3
+                %label{ for: 'species' } Species
+                %input{ id: 'species', name: 'species', value: 'cat' }
+                %small try to fill in 'dog' or 'cat'
+              .span3
+                %label{ for: 'breed' } Breed
+                %select{ id: 'breed', name: 'breed' }
+                  %option
+                  %option{ value: 'siberian_husky', 'data-chain' => 'dog' } Siberian Husky
+                  %option{ value: 'shetland_sheepdog', selected: 'selected', 'data-chain' => 'dog' } Shetland Sheepdog
+                  %option{ value: 'boxer', 'data-chain' => 'dog' } Boxer
+                  %option{ value: 'persian', 'data-chain' => 'cat' } Persian
+                  %option{ value: 'egyptian_mau', 'data-chain' => 'cat' } Egyptian Mau
+              .clear
+            %h4 Demo
+            .well
+              .span3
+                %label{ for: 'country' } Country
+                %select.chain{ id: 'country', name: 'country' }
+                  %option
+                  %option{ value: 'au', selected: 'selected' } Australia
+                  %option{ value: 'cn' } China
+              .span3
+                %label{ for: 'city' } Major City
+                %select{ id: 'city', name: 'city', 'data-toggle' => 'chain', 'data-target' => '#country' }
+                  %option
+                  %option{ value: 'syd', 'data-chain' => 'au' } Sydney
+                  %option{ value: 'mel', 'data-chain' => 'au' } Melbourne
+                  %option{ value: 'bne', 'data-chain' => 'au' } Brisbane
+                  %option{ value: 'adl', selected: 'selected', 'data-chain' => 'au' } Adelaide
+                  %option{ value: 'bj', 'data-chain' => 'cn' } Bei Jing
+                  %option{ value: 'sh', 'data-chain' => 'cn' } Shang Hai
+                  %option{ value: 'gz', 'data-chain' => 'cn' } Guang Zhou
+              .span3
+                %label{ for: 'wildlife' } Wildlife
+                %select{ id: 'wildlife', name: 'wildlife', 'data-toggle' => 'chain', 'data-target' => '#country' }
+                  %option
+                  %option{ value: 'koala', 'data-chain' => 'au' } Koala
+                  %option{ value: 'kangaroo', 'data-chain' => 'au' } Kangaroo
+                  %option{ value: 'panda', 'data-chain' => 'cn' } Panda
+                  %option{ value: 'monkey', 'data-chain' => 'cn' } Snub-nosed Monkey
+              .clear
+            %h3 Remote
       .footer
         %p
           Licensed under the

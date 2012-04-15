@@ -58,30 +58,34 @@
       attribute_name: 'jquery-dropdown-list-chain-setup',
       event_name: 'change.jquery_dropdown_list_chain'
     };
-    $.fn.chain = function(childElement, settings) {
-      if (childElement == null) childElement = null;
+    $.fn.chain = function(chaineeElement, settings) {
+      if (chaineeElement == null) chaineeElement = null;
       if (settings == null) settings = {};
       return this.each(function() {
-        if (!SelectChain.is_select(childElement)) {
-          childElement = $("select[data-target='#" + this.id + "'][data-toggle=chain]");
+        if (typeof chaineeElement === 'string') chaineeElement = $(chaineeElement);
+        if (!SelectChain.is_select(chaineeElement)) {
+          chaineeElement = $("select[data-target='#" + this.id + "'][data-toggle=chain]");
         }
-        return $(childElement).chainedTo(this, settings);
+        return $(chaineeElement).chainedTo(this, settings);
       });
     };
-    $.fn.chainedTo = function(parentElement, settings) {
-      if (parentElement == null) parentElement = null;
+    $.fn.chainedTo = function(chainerElement, settings) {
+      if (chainerElement == null) chainerElement = null;
       if (settings == null) settings = {};
       settings = $.extend({}, $.chain.defaults, settings);
+      if (typeof chainerElement === 'string') {
+        chainerElement = $(chainerElement)[0];
+      }
       return this.each(function() {
         var setup;
         if (!SelectChain.is_select(this)) return;
-        if (!SelectChain.get_element(parentElement)) {
-          parentElement = $($(this).data('target'))[0];
+        if (!SelectChain.get_element(chainerElement)) {
+          chainerElement = $($(this).data('target'))[0];
         }
-        if (!parentElement) return;
+        if (!chainerElement) return;
         setup = $(this).data($.chain.attribute_name);
-        if (typeof setup !== SelectChain) {
-          setup = new SelectChain($(parentElement), $(this));
+        if (!(setup instanceof SelectChain)) {
+          setup = new SelectChain($(chainerElement), $(this));
         }
         return $(this).data($.chain.attribute_name, setup.update(settings));
       });
@@ -103,33 +107,33 @@
         return /select/i.test(obj['tagName']);
       };
 
-      function SelectChain($parent, $child) {
-        this.$parent = $parent;
-        this.$child = $child;
-        this.$clone = this.$child.clone();
+      function SelectChain($chainer, $chainee) {
+        this.$chainer = $chainer;
+        this.$chainee = $chainee;
+        this.$clone = this.$chainee.clone();
         this.last_selected = {};
-        this.link_parent_and_child;
+        this.chain_them_together();
       }
 
-      SelectChain.prototype.link_parent_and_child = function() {
-        if (!this.$parent.attr('id')) {
-          this.$parent.attr('id', "chain_" + (parseInt(Math.random() * 10000)) + (new Date().getTime()));
+      SelectChain.prototype.chain_them_together = function() {
+        if (!this.$chainer.attr('id')) {
+          this.$chainer.attr('id', "chain_" + (parseInt(Math.random() * 10000)) + (new Date().getTime()));
         }
-        return this.$child.data('toggle', 'chain').data('target', "#" + (this.$parent.attr('id')));
+        return this.$chainee.attr('data-toggle', 'chain').attr('data-target', "#" + (this.$chainer.attr('id')));
       };
 
       SelectChain.prototype.update_last_selected = function() {
         if (this.settings.keep_last_value) {
-          return this.last_selected[this.$parent.val()] = this.$child.val();
+          return this.last_selected[this.$chainer.val()] = this.$chainee.val();
         }
       };
 
       SelectChain.prototype.cleanup = function() {
         var include_blank;
-        this.$child.children().remove();
+        this.$chainee.children().remove();
         include_blank = this.settings.include_blank;
         if (include_blank) {
-          return this.$child.append(this.build_option(include_blank.text, include_blank.value));
+          return this.$chainee.append(this.build_option(include_blank.text, include_blank.value));
         }
       };
 
@@ -152,7 +156,7 @@
           this.load_local_options();
         }
         if (this.settings.keep_last_value) {
-          return this.$child.val(this.last_selected[this.$parent.val()]);
+          return this.$chainee.val(this.last_selected[this.$chainer.val()]);
         }
       };
 
@@ -173,7 +177,7 @@
 
       SelectChain.prototype.load_local_options = function() {
         if (this.$clone) {
-          return this.$child.append(this.$clone.find("option[data-chain='" + (this.$parent.val()) + "']").clone());
+          return this.$chainee.append(this.$clone.find("option[data-chain='" + (this.$chainer.val()) + "']").clone());
         }
       };
 
@@ -182,16 +186,16 @@
     })();
     SelectChain = $.SelectChain;
     $('select[data-toggle=chain][data-target]').chainedTo();
-    return $('body').on($.chain.event_name, 'select', function(e) {
+    return $('body').on($.chain.event_name, 'input, select, textarea', function(e) {
       var $target;
       $target = $(e.target);
-      if ($target.is('[data-toggle=chain][data-target]')) {
-        $target.data($.chain.attribute_name).update_last_selected();
-      }
       if ($target.attr('id')) {
-        return $("select[data-toggle=chain][data-target='#" + ($target.attr('id')) + "']").each(function() {
+        $("select[data-toggle=chain][data-target='#" + ($target.attr('id')) + "']").each(function() {
           return $(this).data($.chain.attribute_name).reload();
         });
+      }
+      if ($target.is('[data-toggle=chain][data-target]')) {
+        return $target.data($.chain.attribute_name).update_last_selected();
       }
     });
   });

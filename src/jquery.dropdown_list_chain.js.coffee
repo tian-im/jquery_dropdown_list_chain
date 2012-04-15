@@ -52,22 +52,24 @@ jQuery ($) ->
     attribute_name: 'jquery-dropdown-list-chain-setup'
     event_name: 'change.jquery_dropdown_list_chain'
 
-  $.fn.chain = (childElement = null, settings = {}) ->
+  $.fn.chain = (chaineeElement = null, settings = {}) ->
     this.each ->
-      childElement = $("select[data-target='##{ this.id }'][data-toggle=chain]") unless SelectChain.is_select childElement
-      $(childElement).chainedTo this, settings
+      chaineeElement = $(chaineeElement) if typeof chaineeElement is 'string' # css selector?
+      chaineeElement = $("select[data-target='##{ this.id }'][data-toggle=chain]") unless SelectChain.is_select chaineeElement
+      $(chaineeElement).chainedTo this, settings
 
-  $.fn.chainedTo = (parentElement = null, settings = {}) ->
+  $.fn.chainedTo = (chainerElement = null, settings = {}) ->
     settings = $.extend {}, $.chain.defaults, settings
+    chainerElement = $(chainerElement)[0] if typeof chainerElement is 'string' # css selector?
     this.each ->
       return unless SelectChain.is_select this
-      # default parentElement
-      parentElement = $($(this).data 'target')[0] unless SelectChain.get_element parentElement
-      return unless parentElement
+      # default chainerElement
+      chainerElement = $($(this).data 'target')[0] unless SelectChain.get_element chainerElement
+      return unless chainerElement
 
       # update setup
       setup = $(this).data $.chain.attribute_name
-      setup = new SelectChain($(parentElement), $(this)) unless typeof setup is SelectChain
+      setup = new SelectChain($(chainerElement), $(this)) unless setup instanceof SelectChain
       $(this).data $.chain.attribute_name, setup.update(settings) # update setup
 
   class $.SelectChain
@@ -83,22 +85,22 @@ jQuery ($) ->
       return false unless obj = SelectChain.get_element(obj)
       /select/i.test obj['tagName']
 
-    constructor: (@$parent, @$child) ->
-      @$clone         = @$child.clone() # keep a copy
+    constructor: (@$chainer, @$chainee) ->
+      @$clone         = @$chainee.clone() # keep a copy
       @last_selected  = {}
-      @link_parent_and_child
+      @chain_them_together()
 
-    link_parent_and_child: ->
-      @$parent.attr 'id', "chain_#{ parseInt Math.random() * 10000 }#{ new Date().getTime() }" unless @$parent.attr 'id'
-      @$child.data('toggle', 'chain').data 'target', "##{ @$parent.attr 'id' }"
+    chain_them_together: -> # force to establish the connection between them
+      @$chainer.attr 'id', "chain_#{ parseInt Math.random() * 10000 }#{ new Date().getTime() }" unless @$chainer.attr 'id'
+      @$chainee.attr('data-toggle', 'chain').attr 'data-target', "##{ @$chainer.attr 'id' }"
 
-    update_last_selected: -> # on child: to save current value
-      @last_selected[ @$parent.val() ] = @$child.val() if @settings.keep_last_value
+    update_last_selected: -> # on chainee: to save current value
+      @last_selected[ @$chainer.val() ] = @$chainee.val() if @settings.keep_last_value
 
     cleanup: ->
-      @$child.children().remove()
+      @$chainee.children().remove()
       include_blank = @settings.include_blank
-      @$child.append @build_option(include_blank.text, include_blank.value) if include_blank
+      @$chainee.append @build_option(include_blank.text, include_blank.value) if include_blank
 
     build_option: (text, value) ->
       $('<option />').text(text).attr 'value', value
@@ -106,13 +108,13 @@ jQuery ($) ->
     update: (@settings) ->
       @update_last_selected(); @reload(); @
 
-    reload: -> # on parent: to reload child options
+    reload: -> # on chainer: to reload chainee options
       @cleanup()
       if @settings.ajax
         @load_remote_options()
       else
         @load_local_options()
-      @$child.val(@last_selected[ @$parent.val() ]) if @settings.keep_last_value
+      @$chainee.val(@last_selected[ @$chainer.val() ]) if @settings.keep_last_value
 
     load_remote_options: ->
       self    = @
@@ -125,7 +127,7 @@ jQuery ($) ->
             self.$element.append self.build_option(record[mapping.text], record[mapping.value])
 
     load_local_options: ->
-      @$child.append @$clone.find("option[data-chain='#{ @$parent.val() }']").clone() if @$clone
+      @$chainee.append @$clone.find("option[data-chain='#{ @$chainer.val() }']").clone() if @$clone
 
   SelectChain = $.SelectChain
 
@@ -133,11 +135,10 @@ jQuery ($) ->
   $('select[data-toggle=chain][data-target]').chainedTo();
 
   # only setup the event once.
-  $('body').on $.chain.event_name, 'select', (e) ->
+  $('body').on $.chain.event_name, 'input, select, textarea', (e) ->
     $target = $(e.target)
-    if $target.is '[data-toggle=chain][data-target]' # child?
-      $target.data($.chain.attribute_name).update_last_selected()
-    if $target.attr 'id'
-      # try to lookup the children dropdown list
+    if $target.attr 'id' # chainer?
       $("select[data-toggle=chain][data-target='##{ $target.attr 'id' }']").each ->
         $(this).data($.chain.attribute_name).reload()
+    if $target.is '[data-toggle=chain][data-target]' # chainee?
+      $target.data($.chain.attribute_name).update_last_selected()
