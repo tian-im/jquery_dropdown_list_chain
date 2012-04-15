@@ -83,7 +83,7 @@ jQuery ($) ->
 
     reload: -> # on chainer: to reload chainee options
       @_cleanup_chainee_options()
-      (ajax_settings = @_load_ajax_settings()) ? @_load_options_from_remote_with ajax_settings : @_load_options_from_local()
+      (ajax_settings = @_load_ajax_settings()) and @_load_options_from_remote_with(ajax_settings) or @_load_options_from_local()
       @_load_last_selected()
 
     # private
@@ -108,7 +108,7 @@ jQuery ($) ->
 
     # ajax
     _load_ajax_settings: ->
-      ! $.isFunction(ajax) ? ajax : ajax() if ajax = @settings.ajax
+      $.isFunction(ajax) and ajax() or ajax if ajax = @settings.ajax
 
     _load_options_from_remote_with: (ajax_settings) ->
       process = $.proxy @_map_each_record, @
@@ -116,8 +116,8 @@ jQuery ($) ->
         $.each data, process
 
     _map_each_record: (index, record) ->
-      return if (filter = @settings.ajax_mapping.filter) && filter(record, @$chainer.val())
-      return if (build_option = @settings.ajax_mapping.build_option) && build_option(record)
+      return if (filter = @settings.ajax_mapping.filter) and filter(record, @$chainer.val())
+      return if (build_option = @settings.ajax_mapping.build_option) and build_option(record)
       (mapping = @settings.ajax_mapping) and @$chainee.append @_build_option(record[mapping.text], record[mapping.value])
 
   SelectChain = $.SelectChain

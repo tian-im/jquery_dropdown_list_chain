@@ -112,13 +112,7 @@
       SelectChain.prototype.reload = function() {
         var ajax_settings;
         this._cleanup_chainee_options();
-                if ((ajax_settings = this._load_ajax_settings()) != null) {
-          ajax_settings = this._load_ajax_settings();
-        } else {
-          this._load_options_from_remote_with({
-            ajax_settings: this._load_options_from_local()
-          });
-        };
+        (ajax_settings = this._load_ajax_settings()) && this._load_options_from_remote_with(ajax_settings) || this._load_options_from_local();
         return this._load_last_selected();
       };
 
@@ -157,12 +151,8 @@
       };
 
       SelectChain.prototype._load_ajax_settings = function() {
-        var ajax, _ref;
-        if (ajax = this.settings.ajax) {
-          return (_ref = !$.isFunction(ajax)) != null ? _ref : {
-            ajax: ajax()
-          };
-        }
+        var ajax;
+        if (ajax = this.settings.ajax) return $.isFunction(ajax) && ajax() || ajax;
       };
 
       SelectChain.prototype._load_options_from_remote_with = function(ajax_settings) {
