@@ -158,7 +158,7 @@
       SelectChain.prototype._load_options_from_remote_with = function(ajax_settings) {
         var process;
         process = $.proxy(this._map_each_record, this);
-        return $.ajax(ajax_settings).success(function(data, textStatus, jqXHR) {
+        return $.ajax(ajax_settings).done(function(data, textStatus, jqXHR) {
           return $.each(data, process);
         });
       };

@@ -112,7 +112,7 @@ jQuery ($) ->
 
     _load_options_from_remote_with: (ajax_settings) ->
       process = $.proxy @_map_each_record, @
-      $.ajax(ajax_settings).success (data, textStatus, jqXHR) ->
+      $.ajax(ajax_settings).done (data, textStatus, jqXHR) ->
         $.each data, process
 
     _map_each_record: (index, record) ->
