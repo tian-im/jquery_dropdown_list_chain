@@ -1,7 +1,7 @@
 [
-  { 'text': 'Jack', 'value': 'jack', 'chain': 'male' },
-  { 'text': 'James', 'value': 'james', 'chain': 'male' },
-  { 'text': 'Rose', 'value': 'rose', 'chain': 'female' },
-  { 'text': 'Angela', 'value': 'angela', 'chain': 'female' },
-  { 'text': 'E.T.', 'value': 'et', 'chain': 'unknown' }
+  { "text": "Jack", "value": "jack", "chain": "male" },
+  { "text": "James", "value": "james", "chain": "male" },
+  { "text": "Rose", "value": "rose", "chain": "female" },
+  { "text": "Angela", "value": "angela", "chain": "female" },
+  { "text": "E.T.", "value": "et", "chain": "unknown" }
 ]
