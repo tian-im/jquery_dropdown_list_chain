@@ -47,7 +47,7 @@ jQuery ($) ->
       chainerElement = $($(this).data 'target')[0] unless SelectChain.get_element chainerElement
       return unless chainerElement
 
-      settings = $.extend {}, $.chain.defaults, $(this).data(), settings
+      settings = $.extend true, {}, $.chain.defaults, $(this).data(), settings
 
       # update setup
       setup = $(this).data $.chain.attribute_name

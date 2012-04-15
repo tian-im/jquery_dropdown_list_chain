@@ -63,7 +63,7 @@
           chainerElement = $($(this).data('target'))[0];
         }
         if (!chainerElement) return;
-        settings = $.extend({}, $.chain.defaults, $(this).data(), settings);
+        settings = $.extend(true, {}, $.chain.defaults, $(this).data(), settings);
         setup = $(this).data($.chain.attribute_name);
         if (!(setup instanceof SelectChain)) {
           setup = new SelectChain($(chainerElement), $(this));
