@@ -28,10 +28,10 @@
         remember_last_value: true,
         ajax: false,
         ajax_mapping: {
+          filter: false,
           text: 'text',
           value: 'value',
-          build_option: false,
-          filter: false
+          build_option: false
         }
       },
       version: '0.9',

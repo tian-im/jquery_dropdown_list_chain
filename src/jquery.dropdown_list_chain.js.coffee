@@ -24,10 +24,10 @@ jQuery ($) ->
       remember_last_value: true
       ajax: false # function(current_chainer_value) { return ajax_option; }
       ajax_mapping:
+        filter: false # function(record, chainer_value) { return false; }
         text: 'text'
         value: 'value'
         build_option: false # function(record) { return $('<option />'); }
-        filter: false # function(record, chainer_value) { return false; }
     version: '0.9'
     name: 'jQuery Dropdown List Chain'
     attribute_name: 'jquery-dropdown-list-chain-setup'

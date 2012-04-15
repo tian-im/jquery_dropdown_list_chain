@@ -11,6 +11,8 @@
       %link{ type: 'text/css', rel: 'stylesheet', href: css_url }
     - %w( http://tian.im/javascripts/google_analytics.js http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js http://twitter.github.com/bootstrap/assets/js/bootstrap-scrollspy.js http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.js src/jquery.dropdown_list_chain.js examples/demo.js ).each do |js_url|
       %script{ type: 'text/javascript', src: js_url }
+    / TODO: add more info for SEO
+    %meta
   %body{ 'data-spy' => 'scroll', 'data-target' => 'div.subnav', 'data-offset' => 70 }
     .navbar.navbar-fixed-top
       .navbar-inner
@@ -54,7 +56,7 @@
       .row
         .span3.column
           %h3 About
-          %p Some description here
+          %p Help you to reload the dropdown list options once target dropdown list is changed.
           %h3 Jasmine Test
           %p
             %a{ href: 'SpecRunner.html', target: '_blank'} Click to open the test page.
@@ -158,6 +160,23 @@
                     %div }
                   %td Options for setting up how to map each AJAX record and build the HTML Option element.
                 %tr
+                  %td ajax_mapping.filter
+                  %td function
+                  %td false
+                  %td
+                    %p Custom method to filter each AJAX record.
+                    %p
+                      %b param:
+                      %code record
+                      ,
+                      %code chainer_value
+                    %p
+                      %b return:
+                      %code boolean
+                    %p
+                      Example:
+                    - codes.call "function(record, chainer) {\n return false;\n}", 'javascript'
+                %tr
                   %td ajax_mapping.text
                   %td string
                   %td 'text'
@@ -186,7 +205,7 @@
                       %small ( jQuery | Element )
                     %p
                       Example:
-                    - codes.call "function(record) {\n return $('<option />').text(record.text).attr('value', record.value)\n}"
+                    - codes.call "function(record) {\n return $('<option />').text(record.text).attr('value', record.value)\n}", 'javascript'
           #example-local.section
             %h2 Example - Local
             %h3 Option 1
@@ -224,7 +243,8 @@
               .clear
             %h3 Option 2
             %p Manual Javascript setup.
-            - codes.call "<!-- Chainer -->\n<input id='species' />\n\n<!-- Chainee -->\n<select id='breed'>\n  <option value='' data-chain='dog'> Sydney </option>\n  <option value='mel' data-chain='dog'> Melbourne </option>\n  <option value='bj' data-chain='cat'> Bei Jing </option>\n  <option value='gz' data-chain='cat'> Guang Zhou </option>\n</select>\n\n<script type='text/javascript'>\n  jQuery(function($) {\n    $('#country').chain('#city');\n    // or $('#city').chainedTo($('#country'));\n  });\n</script>"
+            %h3 Code Example
+            - codes.call "<!-- Chainer -->\n<input id='species' />\n\n<!-- Chainee -->\n<select id='breed'>\n  <option value='' data-chain='dog'> Sydney </option>\n  <option value='mel' data-chain='dog'> Melbourne </option>\n  <option value='bj' data-chain='cat'> Bei Jing </option>\n  <option value='gz' data-chain='cat'> Guang Zhou </option>\n</select>\n\n<script type='text/javascript'>\n  jQuery(function($) {\n    $('#country').chain('#city');\n    // or $('#city').chainedTo('#country');\n  });\n</script>"
             %h3 Demo
             .well
               .span3
@@ -243,6 +263,12 @@
               .clear
           #example-remote.section
             %h2 Example - Remote
+            %p
+              See
+              %a{ href: 'http://api.jquery.com/jQuery.ajax/', target: '_blank' } jQuery.ajax( settings )
+              for more information about the jQuery AJAX call.
+            %h3 Code Example
+            - codes.call "<!-- Chainer -->\n<select id='gender' />\n  <option />\n  <option value='male'> Male </option>\n  <option value='female'> Female </option>\n  <option value='unknown'> Unknown </option>\n</select>\n\n<!-- Chainee -->\n<select id='person_name'></select>\n\n<script type='text/javascript'>\n  jQuery(function($) {\n    $('#gender').chain('#person_name', {\n      ajax: {\n        url: './examples/demo.json',\n        dataType: 'json'\n      },\n      ajax_mapping: {\n        filter: function(record, chainer_value) {\n          if (record.chain !== chainer_value) return true;\n        }\n      }\n    });\n  });\n</script>"
             %h3 Demo
             .well
               .span3
