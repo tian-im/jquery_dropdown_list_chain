@@ -151,16 +151,19 @@
       };
 
       SelectChain.prototype._load_ajax_settings = function() {
-        var ajax;
-        if (ajax = this.settings.ajax) return $.isFunction(ajax) && ajax() || ajax;
+        var ajax, process;
+        if (ajax = this.settings.ajax) ajax = $.isFunction(ajax) && ajax() || ajax;
+        if (!$.isFunction(ajax.success)) {
+          process = $.proxy(this._map_each_record, this);
+          ajax.success = function(data, textStatus, jqXHR) {
+            return $.each(data, process);
+          };
+        }
+        return ajax;
       };
 
       SelectChain.prototype._load_options_from_remote_with = function(ajax_settings) {
-        var process;
-        process = $.proxy(this._map_each_record, this);
-        return $.ajax(ajax_settings).done(function(data, textStatus, jqXHR) {
-          return $.each(data, process);
-        });
+        return $.ajax(ajax_settings);
       };
 
       SelectChain.prototype._map_each_record = function(index, record) {
