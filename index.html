@@ -50,6 +50,9 @@
         <div class='subnav subnav-fixed'>
           <ul class='nav nav-pills'>
             <li>
+              <a href='#whatsnew'>What's New</a>
+            </li>
+            <li>
               <a href='#requirement'>Requirement</a>
             </li>
             <li>
@@ -59,10 +62,13 @@
               <a href='#usage'>Usage</a>
             </li>
             <li>
-              <a href='#usage-local'>Usage - Local</a>
+              <a href='#options'>Options</a>
             </li>
             <li>
-              <a href='#usage-remote'>Usage - Remote</a>
+              <a href='#example-local'>Example - Local</a>
+            </li>
+            <li>
+              <a href='#example-remote'>Example - Remote</a>
             </li>
           </ul>
         </div>
@@ -80,20 +86,26 @@
           </p>
         </div>
         <div class='span9 column'>
+          <div class='section' id='whatsnew'>
+            <h2>
+              What's New
+              <small>Not really</small>
+            </h2>
+          </div>
           <div class='section' id='requirement'>
             <h2>
               Requirement
               <small>Latest version of jQuery</small>
             </h2>
-<pre class='prettyprint linenums'>&lt;script type='text/javascript' src='url_to/jquery.min.js' /&gt;</pre>
+<pre class='prettyprint linenums lang-html'>&lt;script type='text/javascript' src='url_to/jquery.min.js' /&gt;</pre>
           </div>
           <div class='section' id='installation'>
             <h2>Installation</h2>
-<pre class='prettyprint linenums'>&lt;script type='text/javascript' src='url_to/jquery.dropdown_list_chain.js' /&gt;</pre>
+<pre class='prettyprint linenums lang-html'>&lt;script type='text/javascript' src='url_to/jquery.dropdown_list_chain.js' /&gt;</pre>
           </div>
           <div class='section' id='usage'>
             <h2>Usage</h2>
-<pre class='prettyprint linenums'>&lt;script type='text/javascript'&gt;&#x000A;  jQuery(function($) {&#x000A;    $(chainer_selector).chain( /* { chainee_selector | jQuery | Element } [ , options = {} ] */ );&#x000A;    $(chainee_selector).chainedTo( /* { chainer_selector | jQuery | Element } [ , options = {} ] */ );&#x000A;  });&#x000A;&lt;/script&gt;</pre>
+<pre class='prettyprint linenums lang-html'>&lt;script type='text/javascript'&gt;&#x000A;  jQuery(function($) {&#x000A;    $(chainer_selector).chain( /* { chainee_selector | jQuery | Element } [ , options = {} ] */ );&#x000A;    $(chainee_selector).chainedTo( /* { chainer_selector | jQuery | Element } [ , options = {} ] */ );&#x000A;  });&#x000A;&lt;/script&gt;</pre>
             <div class='alert alert-info'>
               <strong>NOTE:</strong>
               the chainer doesn't need to be a dropdown list, it could be input field, checkbox, radiobox or even a textarea. Please see Local -> Option 2 -> Demo.
@@ -103,14 +115,148 @@
               the chainee must be HTML Select element.
             </div>
           </div>
-          <div class='section' id='usage-local'>
-            <h3>Local</h3>
-            <h4>Option 1</h4>
+          <div class='section' id='options'>
+            <h2>Options</h2>
+            <h3>Precedence:</h3>
+            <ol>
+              <li>
+                <p>Options passed in javascript.</p>
+                <p>
+                  e.g.
+                  <code>$('selector').chain('selector', { include_blank: false });</code>
+                </p>
+              </li>
+              <li>
+                <p>Options set in the HTML</p>
+                <p>
+                  e.g.
+                  <code>&lt;select data-include_blank='false' /&gt;</code>
+                </p>
+              </li>
+              <li>Default options</li>
+            </ol>
+            <table class='table table-bordered table-striped'>
+              <thead>
+                <tr>
+                  <th width='100px'>Name</th>
+                  <th width='50px'>Type</th>
+                  <th width='100px'>Default</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>include_blank</td>
+                  <td>object</td>
+                  <td>
+                    <div>{</div>
+                    <div>&nbsp; &nbsp; text: ' - ',</div>
+                    <div>&nbsp; &nbsp; value: ''</div>
+                    <div>}</div>
+                  </td>
+                  <td>
+                    <p>Whether to include the blank option for dropdown list as the first item.</p>
+                    <p>
+                      You could disable this by setting it to
+                      <code>false</code>
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>include_blank.text</td>
+                  <td>string</td>
+                  <td>' - '</td>
+                  <td>
+                    <b>Text</b>
+                    for the blank option.
+                  </td>
+                </tr>
+                <tr>
+                  <td>include_blank.value</td>
+                  <td>string</td>
+                  <td>''</td>
+                  <td>
+                    <b>Value</b>
+                    for the blank option.
+                  </td>
+                </tr>
+                <tr>
+                  <td>remember_last_value</td>
+                  <td>boolean</td>
+                  <td>true</td>
+                  <td>Whether to remember the last selected value</td>
+                </tr>
+                <tr>
+                  <td>ajax</td>
+                  <td>object</td>
+                  <td>false</td>
+                  <td>
+                    Options for jQuery AJAX call, see
+                    <a href='http://api.jquery.com/jQuery.ajax/' target='_blank'>jQuery.ajax( settings )</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>ajax_mapping</td>
+                  <td>object</td>
+                  <td>
+                    <div>{</div>
+                    <div>&nbsp; &nbsp; text: ' - ',</div>
+                    <div>&nbsp; &nbsp; value: '',</div>
+                    <div>&nbsp; &nbsp; build_option: false</div>
+                    <div>}</div>
+                  </td>
+                  <td>Options for setting up how to map each AJAX record and build the HTML Option element.</td>
+                </tr>
+                <tr>
+                  <td>ajax_mapping.text</td>
+                  <td>string</td>
+                  <td>'text'</td>
+                  <td>
+                    Property name of each AJAX record which will be used as the
+                    <b>text</b>
+                  </td>
+                </tr>
+                <tr>
+                  <td>ajax_mapping.value</td>
+                  <td>string</td>
+                  <td>''</td>
+                  <td>
+                    Property name of each AJAX record which will be used as the
+                    <b>value</b>
+                  </td>
+                </tr>
+                <tr>
+                  <td>ajax_mapping.build_option</td>
+                  <td>function</td>
+                  <td>false</td>
+                  <td>
+                    <p>Custom method to map each AJAX record to build the HTML Option element.</p>
+                    <p>
+                      <b>param:</b>
+                      <code>record</code>
+                    </p>
+                    <p>
+                      <b>return:</b>
+                      <code>option</code>
+                      <small>( jQuery | Element )</small>
+                    </p>
+                    <p>
+                      Example:
+                    </p>
+<pre class='prettyprint linenums lang-html'>function(record) {&#x000A; return $('&lt;option /&gt;').text(record.text).attr('value', record.value)&#x000A;}</pre>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class='section' id='example-local'>
+            <h2>Example - Local</h2>
+            <h3>Option 1</h3>
             <p>No javascript is needed if you follow below markup.</p>
-<pre class='prettyprint linenums'>&lt;!-- Chainee --&gt;&#x000A;&lt;select id='...' data-target='#{ parent_css_selector }' data-toggle='chain'&gt;&#x000A;  &lt;option value='...' data-chain='...'&gt; ... &lt;/option&gt;&#x000A;&lt;/select&gt;</pre>
-            <h4>Code Example</h4>
-<pre class='prettyprint linenums'>&lt;!-- Chainer --&gt;&#x000A;&lt;select id='country'&gt;&#x000A;  &lt;option value='au'&gt; Australia &lt;/option&gt;&#x000A;  &lt;option value='cn'&gt; China &lt;/option&gt;&#x000A;&lt;/select&gt;&#x000A;&#x000A;&lt;!-- Chainee --&gt;&#x000A;&lt;select id='city' data-target='#country' data-toggle='chain'&gt;&#x000A;  &lt;option value='syd' data-chain='au'&gt; Sydney &lt;/option&gt;&#x000A;  &lt;option value='mel' data-chain='au'&gt; Melbourne &lt;/option&gt;&#x000A;  &lt;option value='bj' data-chain='cn'&gt; Bei Jing &lt;/option&gt;&#x000A;  &lt;option value='gz' data-chain='cn'&gt; Guang Zhou &lt;/option&gt;&#x000A;&lt;/select&gt;</pre>
-            <h4>Demo</h4>
+<pre class='prettyprint linenums lang-html'>&lt;!-- Chainee --&gt;&#x000A;&lt;select id='...' data-target='#{ parent_css_selector }' data-toggle='chain'&gt;&#x000A;  &lt;option value='...' data-chain='...'&gt; ... &lt;/option&gt;&#x000A;&lt;/select&gt;</pre>
+            <h3>Code Example</h3>
+<pre class='prettyprint linenums lang-html'>&lt;!-- Chainer --&gt;&#x000A;&lt;select id='country'&gt;&#x000A;  &lt;option value='au'&gt; Australia &lt;/option&gt;&#x000A;  &lt;option value='cn'&gt; China &lt;/option&gt;&#x000A;&lt;/select&gt;&#x000A;&#x000A;&lt;!-- Chainee --&gt;&#x000A;&lt;select id='city' data-target='#country' data-toggle='chain'&gt;&#x000A;  &lt;option value='syd' data-chain='au'&gt; Sydney &lt;/option&gt;&#x000A;  &lt;option value='mel' data-chain='au'&gt; Melbourne &lt;/option&gt;&#x000A;  &lt;option value='bj' data-chain='cn'&gt; Bei Jing &lt;/option&gt;&#x000A;  &lt;option value='gz' data-chain='cn'&gt; Guang Zhou &lt;/option&gt;&#x000A;&lt;/select&gt;</pre>
+            <h3>Demo</h3>
             <div class='well'>
               <div class='span3'>
                 <label for='country'>Country</label>
@@ -145,10 +291,10 @@
               </div>
               <div class='clear'></div>
             </div>
-            <h4>Option 2</h4>
+            <h3>Option 2</h3>
             <p>Manual Javascript setup.</p>
-<pre class='prettyprint linenums'>&lt;!-- Chainer --&gt;&#x000A;&lt;input id='species' /&gt;&#x000A;&#x000A;&lt;!-- Chainee --&gt;&#x000A;&lt;select id='breed'&gt;&#x000A;  &lt;option value='' data-chain='dog'&gt; Sydney &lt;/option&gt;&#x000A;  &lt;option value='mel' data-chain='dog'&gt; Melbourne &lt;/option&gt;&#x000A;  &lt;option value='bj' data-chain='cat'&gt; Bei Jing &lt;/option&gt;&#x000A;  &lt;option value='gz' data-chain='cat'&gt; Guang Zhou &lt;/option&gt;&#x000A;&lt;/select&gt;&#x000A;&#x000A;&lt;script type='text/javascript'&gt;&#x000A;  jQuery(function($) {&#x000A;    $('#country').chain('#city');&#x000A;    // or $('#city').chainedTo($('#country'));&#x000A;  });&#x000A;&lt;/script&gt;</pre>
-            <h4>Demo</h4>
+<pre class='prettyprint linenums lang-html'>&lt;!-- Chainer --&gt;&#x000A;&lt;input id='species' /&gt;&#x000A;&#x000A;&lt;!-- Chainee --&gt;&#x000A;&lt;select id='breed'&gt;&#x000A;  &lt;option value='' data-chain='dog'&gt; Sydney &lt;/option&gt;&#x000A;  &lt;option value='mel' data-chain='dog'&gt; Melbourne &lt;/option&gt;&#x000A;  &lt;option value='bj' data-chain='cat'&gt; Bei Jing &lt;/option&gt;&#x000A;  &lt;option value='gz' data-chain='cat'&gt; Guang Zhou &lt;/option&gt;&#x000A;&lt;/select&gt;&#x000A;&#x000A;&lt;script type='text/javascript'&gt;&#x000A;  jQuery(function($) {&#x000A;    $('#country').chain('#city');&#x000A;    // or $('#city').chainedTo($('#country'));&#x000A;  });&#x000A;&lt;/script&gt;</pre>
+            <h3>Demo</h3>
             <div class='well'>
               <div class='span3'>
                 <label for='species'>Species</label>
@@ -169,8 +315,25 @@
               <div class='clear'></div>
             </div>
           </div>
-          <div class='section' id='usage-remote'>
-            <h3>Remote</h3>
+          <div class='section' id='example-remote'>
+            <h2>Example - Remote</h2>
+            <h3>Demo</h3>
+            <div class='well'>
+              <div class='span3'>
+                <label for='gender'>Gender</label>
+                <select id='gender' name='gender'>
+                  <option></option>
+                  <option value='male'>Male</option>
+                  <option value='female'>Female</option>
+                  <option value='unknown'>Unknown</option>
+                </select>
+              </div>
+              <div class='span3'>
+                <label for='person_name'>Name for the Person</label>
+                <select id='person_name' name='person_name'></select>
+              </div>
+              <div class='clear'></div>
+            </div>
           </div>
         </div>
       </div>

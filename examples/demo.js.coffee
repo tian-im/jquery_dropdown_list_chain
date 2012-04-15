@@ -4,3 +4,10 @@ jQuery ($) ->
   prettyPrint()
   # demo 2
   $('#species').chain('#breed')
+  $('#gender').chain '#person_name',
+    ajax:
+      url: './examples/demo.json'
+      dataType: 'json'
+    ajax_mapping:
+      filter: (record, chainer_value) ->
+        return true if record.chain isnt chainer_value

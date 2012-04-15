@@ -1,6 +1,6 @@
 - # helpers
-- codes = lambda do |lines_of_code|
-  %pre.prettyprint.linenums
+- codes = lambda do |lines_of_code, lang = 'lang-html'|
+  %pre{ class: "prettyprint linenums #{ lang }" }
     :preserve
       #{ lines_of_code.gsub(/</, '&lt;').gsub(/>/, '&gt;') }
 !!! 5
@@ -36,15 +36,19 @@
         .subnav.subnav-fixed
           %ul.nav.nav-pills
             %li
+              %a{ href: '#whatsnew' } What's New
+            %li
               %a{ href: '#requirement' } Requirement
             %li
               %a{ href: '#installation' } Installation
             %li
               %a{ href: '#usage' } Usage
             %li
-              %a{ href: '#usage-local' } Usage - Local
+              %a{ href: '#options' } Options
             %li
-              %a{ href: '#usage-remote' } Usage - Remote
+              %a{ href: '#example-local' } Example - Local
+            %li
+              %a{ href: '#example-remote' } Example - Remote
       .page-header
         %h1.title
       .row
@@ -55,6 +59,10 @@
           %p
             %a{ href: 'SpecRunner.html', target: '_blank'} Click to open the test page.
         .span9.column
+          #whatsnew.section
+            %h2
+              What's New
+              %small Not really
           #requirement.section
             %h2
               Requirement
@@ -72,14 +80,121 @@
             .alert.alert-info
               %strong NOTE:
               the chainee must be HTML Select element.
-          #usage-local.section
-            %h3 Local
-            %h4 Option 1
+          #options.section
+            %h2 Options
+            %h3 Precedence:
+            %ol
+              %li
+                %p Options passed in javascript.
+                %p
+                  e.g.
+                  %code
+                    :escaped
+                      $('selector').chain('selector', { include_blank: false });
+              %li
+                %p Options set in the HTML
+                %p
+                  e.g.
+                  %code
+                    :escaped
+                      <select data-include_blank='false' />
+              %li Default options
+
+            %table.table.table-bordered.table-striped
+              %thead
+                %tr
+                  %th{ width: '100px'} Name
+                  %th{ width: '50px'} Type
+                  %th{ width: '100px'} Default
+                  %th Description
+              %tbody
+                %tr
+                  %td include_blank
+                  %td object
+                  %td
+                    %div {
+                    %div &nbsp; &nbsp; text: ' - ',
+                    %div &nbsp; &nbsp; value: ''
+                    %div }
+                  %td
+                    %p Whether to include the blank option for dropdown list as the first item.
+                    %p
+                      You could disable this by setting it to
+                      %code false
+                %tr
+                  %td include_blank.text
+                  %td string
+                  %td ' - '
+                  %td
+                    %b Text
+                    for the blank option.
+                %tr
+                  %td include_blank.value
+                  %td string
+                  %td ''
+                  %td
+                    %b Value
+                    for the blank option.
+                %tr
+                  %td remember_last_value
+                  %td boolean
+                  %td true
+                  %td Whether to remember the last selected value
+                %tr
+                  %td ajax
+                  %td object
+                  %td false
+                  %td
+                    Options for jQuery AJAX call, see
+                    %a{ href: 'http://api.jquery.com/jQuery.ajax/', target: '_blank' } jQuery.ajax( settings )
+                %tr
+                  %td ajax_mapping
+                  %td object
+                  %td
+                    %div {
+                    %div &nbsp; &nbsp; text: ' - ',
+                    %div &nbsp; &nbsp; value: '',
+                    %div &nbsp; &nbsp; build_option: false
+                    %div }
+                  %td Options for setting up how to map each AJAX record and build the HTML Option element.
+                %tr
+                  %td ajax_mapping.text
+                  %td string
+                  %td 'text'
+                  %td
+                    Property name of each AJAX record which will be used as the
+                    %b text
+                %tr
+                  %td ajax_mapping.value
+                  %td string
+                  %td ''
+                  %td
+                    Property name of each AJAX record which will be used as the
+                    %b value
+                %tr
+                  %td ajax_mapping.build_option
+                  %td function
+                  %td false
+                  %td
+                    %p Custom method to map each AJAX record to build the HTML Option element.
+                    %p
+                      %b param:
+                      %code record
+                    %p
+                      %b return:
+                      %code option
+                      %small ( jQuery | Element )
+                    %p
+                      Example:
+                    - codes.call "function(record) {\n return $('<option />').text(record.text).attr('value', record.value)\n}"
+          #example-local.section
+            %h2 Example - Local
+            %h3 Option 1
             %p No javascript is needed if you follow below markup.
             - codes.call "<!-- Chainee -->\n<select id='...' data-target='\#{ parent_css_selector }' data-toggle='chain'>\n  <option value='...' data-chain='...'> ... </option>\n</select>"
-            %h4 Code Example
+            %h3 Code Example
             - codes.call "<!-- Chainer -->\n<select id='country'>\n  <option value='au'> Australia </option>\n  <option value='cn'> China </option>\n</select>\n\n<!-- Chainee -->\n<select id='city' data-target='#country' data-toggle='chain'>\n  <option value='syd' data-chain='au'> Sydney </option>\n  <option value='mel' data-chain='au'> Melbourne </option>\n  <option value='bj' data-chain='cn'> Bei Jing </option>\n  <option value='gz' data-chain='cn'> Guang Zhou </option>\n</select>"
-            %h4 Demo
+            %h3 Demo
             .well
               .span3
                 %label{ for: 'country' } Country
@@ -107,10 +222,10 @@
                   %option{ value: 'panda', 'data-chain' => 'cn' } Panda
                   %option{ value: 'monkey', 'data-chain' => 'cn' } Snub-nosed Monkey
               .clear
-            %h4 Option 2
+            %h3 Option 2
             %p Manual Javascript setup.
             - codes.call "<!-- Chainer -->\n<input id='species' />\n\n<!-- Chainee -->\n<select id='breed'>\n  <option value='' data-chain='dog'> Sydney </option>\n  <option value='mel' data-chain='dog'> Melbourne </option>\n  <option value='bj' data-chain='cat'> Bei Jing </option>\n  <option value='gz' data-chain='cat'> Guang Zhou </option>\n</select>\n\n<script type='text/javascript'>\n  jQuery(function($) {\n    $('#country').chain('#city');\n    // or $('#city').chainedTo($('#country'));\n  });\n</script>"
-            %h4 Demo
+            %h3 Demo
             .well
               .span3
                 %label{ for: 'species' } Species
@@ -126,8 +241,21 @@
                   %option{ value: 'persian', 'data-chain' => 'cat' } Persian
                   %option{ value: 'egyptian_mau', 'data-chain' => 'cat' } Egyptian Mau
               .clear
-          #usage-remote.section
-            %h3 Remote
+          #example-remote.section
+            %h2 Example - Remote
+            %h3 Demo
+            .well
+              .span3
+                %label{ for: 'gender' } Gender
+                %select{ id: 'gender', name: 'gender' }
+                  %option
+                  %option{ value: 'male' } Male
+                  %option{ value: 'female' } Female
+                  %option{ value: 'unknown' } Unknown
+              .span3
+                %label{ for: 'person_name' } Name for the Person
+                %select{ id: 'person_name', name: 'person_name' }
+              .clear
       .footer
         %p
           Licensed under the
