@@ -9,9 +9,9 @@
     %title Demo
     - %w( http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css http://twitter.github.com/bootstrap/assets/css/bootstrap.css http://twitter.github.com/bootstrap/assets/css/docs.css http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css examples/demo.css ).each do |css_url|
       %link{ type: 'text/css', rel: 'stylesheet', href: css_url }
-    - %w( http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js src/jquery.dropdown_list_chain.js examples/demo.js http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.js ).each do |js_url|
+    - %w( http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js http://twitter.github.com/bootstrap/assets/js/bootstrap-scrollspy.js http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.js src/jquery.dropdown_list_chain.js examples/demo.js ).each do |js_url|
       %script{ type: 'text/javascript', src: js_url }
-  %body{ 'data-spy' => 'scroll' }
+  %body{ 'data-spy' => 'scroll', 'data-target' => 'div.subnav', 'data-offset' => 70 }
     .navbar.navbar-fixed-top
       .navbar-inner
         .container
@@ -19,12 +19,32 @@
             %ul.nav
               %li.active
                 %a Overview
+              %li
+                %a{ href: 'https://github.com/chentianwen/jquery_dropdown_list_chain/zipball/master' }
+                  Download ZIP
+              %li
+                %a{ href: 'https://github.com/chentianwen/jquery_dropdown_list_chain/tarball/master' }
+                  %b.icon-download
+                  Download TAR
               %li.divider-vertical
               %li
                 %a{ href: 'https://github.com/chentianwen/jquery_dropdown_list_chain/issues', target: '_blank' } Issues &amp; Feedbacks
               %li
                 %a{ href: 'https://github.com/chentianwen/jquery_dropdown_list_chain', target: '_blank' } Fork me
     .container
+      %header.jumbotron.subhead#overview
+        .subnav.subnav-fixed
+          %ul.nav.nav-pills
+            %li
+              %a{ href: '#requirement' } Requirement
+            %li
+              %a{ href: '#installation' } Installation
+            %li
+              %a{ href: '#usage' } Usage
+            %li
+              %a{ href: '#usage-local' } Usage - Local
+            %li
+              %a{ href: '#usage-remote' } Usage - Remote
       .page-header
         %h1.title
       .row
@@ -35,21 +55,24 @@
           %p
             %a{ href: 'SpecRunner.html', target: '_blank'} Click to open the test page.
         .span9.column
-          #requirement
+          #requirement.section
             %h2
               Requirement
               %small Latest version of jQuery
             - codes.call "<script type='text/javascript' src='url_to/jquery.min.js' />"
-          #installation
+          #installation.section
             %h2 Installation
             - codes.call "<script type='text/javascript' src='url_to/jquery.dropdown_list_chain.js' />"
-          #demo
-          #usage
+          #usage.section
             %h2 Usage
             - codes.call "<script type='text/javascript'>\n  jQuery(function($) {\n    $(chainer_selector).chain( /* { chainee_selector | jQuery | Element } [ , options = {} ] */ );\n    $(chainee_selector).chainedTo( /* { chainer_selector | jQuery | Element } [ , options = {} ] */ );\n  });\n</script>"
             .alert.alert-info
               %strong NOTE:
+              the chainer doesn't need to be a dropdown list, it could be input field, checkbox, radiobox or even a textarea. Please see Local -> Option 2 -> Demo.
+            .alert.alert-info
+              %strong NOTE:
               the chainee must be HTML Select element.
+          #usage-local.section
             %h3 Local
             %h4 Option 1
             %p No javascript is needed if you follow below markup.
@@ -86,9 +109,6 @@
               .clear
             %h4 Option 2
             %p Manual Javascript setup.
-            .alert.alert-info
-              %strong NOTE:
-              the chainer doesn't need to be a dropdown list, it could be input field, checkbox, radiobox or even a textarea.
             - codes.call "<!-- Chainer -->\n<input id='species' />\n\n<!-- Chainee -->\n<select id='breed'>\n  <option value='' data-chain='dog'> Sydney </option>\n  <option value='mel' data-chain='dog'> Melbourne </option>\n  <option value='bj' data-chain='cat'> Bei Jing </option>\n  <option value='gz' data-chain='cat'> Guang Zhou </option>\n</select>\n\n<script type='text/javascript'>\n  jQuery(function($) {\n    $('#country').chain('#city');\n    // or $('#city').chainedTo($('#country'));\n  });\n</script>"
             %h4 Demo
             .well
@@ -106,34 +126,7 @@
                   %option{ value: 'persian', 'data-chain' => 'cat' } Persian
                   %option{ value: 'egyptian_mau', 'data-chain' => 'cat' } Egyptian Mau
               .clear
-            %h4 Demo
-            .well
-              .span3
-                %label{ for: 'country' } Country
-                %select.chain{ id: 'country', name: 'country' }
-                  %option
-                  %option{ value: 'au', selected: 'selected' } Australia
-                  %option{ value: 'cn' } China
-              .span3
-                %label{ for: 'city' } Major City
-                %select{ id: 'city', name: 'city', 'data-toggle' => 'chain', 'data-target' => '#country' }
-                  %option
-                  %option{ value: 'syd', 'data-chain' => 'au' } Sydney
-                  %option{ value: 'mel', 'data-chain' => 'au' } Melbourne
-                  %option{ value: 'bne', 'data-chain' => 'au' } Brisbane
-                  %option{ value: 'adl', selected: 'selected', 'data-chain' => 'au' } Adelaide
-                  %option{ value: 'bj', 'data-chain' => 'cn' } Bei Jing
-                  %option{ value: 'sh', 'data-chain' => 'cn' } Shang Hai
-                  %option{ value: 'gz', 'data-chain' => 'cn' } Guang Zhou
-              .span3
-                %label{ for: 'wildlife' } Wildlife
-                %select{ id: 'wildlife', name: 'wildlife', 'data-toggle' => 'chain', 'data-target' => '#country' }
-                  %option
-                  %option{ value: 'koala', 'data-chain' => 'au' } Koala
-                  %option{ value: 'kangaroo', 'data-chain' => 'au' } Kangaroo
-                  %option{ value: 'panda', 'data-chain' => 'cn' } Panda
-                  %option{ value: 'monkey', 'data-chain' => 'cn' } Snub-nosed Monkey
-              .clear
+          #usage-remote.section
             %h3 Remote
       .footer
         %p

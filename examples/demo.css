@@ -7,3 +7,9 @@
 .clear {
   clear: both;
 }
+
+/* line 7, demo.scss */
+.section {
+  margin-top: -90px;
+  padding-top: 90px;
+}
