@@ -108,15 +108,12 @@ jQuery ($) ->
 
     # ajax
     _load_ajax_settings: ->
-      ajax = ($.isFunction(ajax) and ajax() or ajax) if ajax = @settings.ajax
-      unless $.isFunction(ajax.success)
-        process = $.proxy @_map_each_record, @
-        ajax.success = (data, textStatus, jqXHR) ->
-          $.each data, process
-      ajax
+      $.isFunction(ajax) and ajax() or ajax if ajax = @settings.ajax
 
     _load_options_from_remote_with: (ajax_settings) ->
-      $.ajax(ajax_settings)
+      process = $.proxy @_map_each_record, @
+      $.ajax(ajax_settings).done (data, textStatus, jqXHR) ->
+        $.each data, process
 
     _map_each_record: (index, record) ->
       return if (filter = @settings.ajax_mapping.filter) and filter(record, @$chainer.val())
