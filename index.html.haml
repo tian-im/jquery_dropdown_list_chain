@@ -143,8 +143,20 @@
                   %td object
                   %td false
                   %td
-                    Options for jQuery AJAX call, see
-                    %a{ href: 'http://api.jquery.com/jQuery.ajax/', target: '_blank' } jQuery.ajax( settings )
+                    %p
+                      1. Options for jQuery AJAX call, see
+                      %a{ href: 'http://api.jquery.com/jQuery.ajax/', target: '_blank' } jQuery.ajax( settings )
+                    %p 2. or you coulf pass a function to return options for jQuery AJAX.
+                    %p
+                      %b param:
+                      %code $chainer
+                      ,
+                      %code $chainee
+                    %p
+                      %b return:
+                      %code object
+                    %p For example:
+                    - codes.call "function($chainer, $chainee) {\n return {};\n}", 'javascript'
                 %tr
                   %td ajax_mapping
                   %td object
@@ -171,7 +183,7 @@
                       %code boolean
                     %p
                       Example:
-                    - codes.call "function(record, chainer) {\n return false;\n}", 'javascript'
+                    - codes.call "function(record, chainer_value) {\n return chainer_value == record;\n}", 'javascript'
                 %tr
                   %td ajax_mapping.text
                   %td string

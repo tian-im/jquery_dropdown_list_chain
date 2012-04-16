@@ -188,8 +188,23 @@
                   <td>object</td>
                   <td>false</td>
                   <td>
-                    Options for jQuery AJAX call, see
-                    <a href='http://api.jquery.com/jQuery.ajax/' target='_blank'>jQuery.ajax( settings )</a>
+                    <p>
+                      1. Options for jQuery AJAX call, see
+                      <a href='http://api.jquery.com/jQuery.ajax/' target='_blank'>jQuery.ajax( settings )</a>
+                    </p>
+                    <p>2. or you coulf pass a function to return options for jQuery AJAX.</p>
+                    <p>
+                      <b>param:</b>
+                      <code>$chainer</code>
+                      ,
+                      <code>$chainee</code>
+                    </p>
+                    <p>
+                      <b>return:</b>
+                      <code>object</code>
+                    </p>
+                    <p>For example:</p>
+<pre class='prettyprint linenums javascript'>function($chainer, $chainee) {&#x000A; return {};&#x000A;}</pre>
                   </td>
                 </tr>
                 <tr>
@@ -223,7 +238,7 @@
                     <p>
                       Example:
                     </p>
-<pre class='prettyprint linenums javascript'>function(record, chainer) {&#x000A; return false;&#x000A;}</pre>
+<pre class='prettyprint linenums javascript'>function(record, chainer_value) {&#x000A; return chainer_value == record;&#x000A;}</pre>
                   </td>
                 </tr>
                 <tr>

@@ -152,7 +152,9 @@
 
       SelectChain.prototype._load_ajax_settings = function() {
         var ajax;
-        if (ajax = this.settings.ajax) return $.isFunction(ajax) && ajax() || ajax;
+        if (ajax = this.settings.ajax) {
+          return $.isFunction(ajax) && ajax(this.$chainer, this.$chainee) || ajax;
+        }
       };
 
       SelectChain.prototype._load_options_from_remote_with = function(ajax_settings) {

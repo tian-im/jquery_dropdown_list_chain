@@ -108,7 +108,7 @@ jQuery ($) ->
 
     # ajax
     _load_ajax_settings: ->
-      $.isFunction(ajax) and ajax() or ajax if ajax = @settings.ajax
+      $.isFunction(ajax) and ajax(@$chainer, @$chainee) or ajax if ajax = @settings.ajax
 
     _load_options_from_remote_with: (ajax_settings) ->
       process = $.proxy @_map_each_record, @
