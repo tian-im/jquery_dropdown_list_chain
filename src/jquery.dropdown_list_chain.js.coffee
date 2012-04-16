@@ -116,8 +116,17 @@ jQuery ($) ->
         $.each data, process
 
     _map_each_record: (index, record) ->
-      return if (filter = @settings.ajax_mapping.filter) and filter(record, @$chainer.val())
-      return if (build_option = @settings.ajax_mapping.build_option) and build_option(record)
+      return if @_filter(record)
+      return if @_custom_build_option(record)
+      @_default_build_option(record)
+
+    _filter: (record) ->
+      (filter = @settings.ajax_mapping.filter) and filter(record, @$chainer.val())
+      
+    _custom_build_option: (record) ->
+      (build_option = @settings.ajax_mapping.build_option) and build_option(record)
+
+    _default_build_option: (record) ->
       (mapping = @settings.ajax_mapping) and @$chainee.append @_build_option(record[mapping.text], record[mapping.value])
 
   SelectChain = $.SelectChain

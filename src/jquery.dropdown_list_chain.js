@@ -164,13 +164,23 @@
       };
 
       SelectChain.prototype._map_each_record = function(index, record) {
-        var build_option, filter, mapping;
-        if ((filter = this.settings.ajax_mapping.filter) && filter(record, this.$chainer.val())) {
-          return;
-        }
-        if ((build_option = this.settings.ajax_mapping.build_option) && build_option(record)) {
-          return;
-        }
+        if (this._filter(record)) return;
+        if (this._custom_build_option(record)) return;
+        return this._default_build_option(record);
+      };
+
+      SelectChain.prototype._filter = function(record) {
+        var filter;
+        return (filter = this.settings.ajax_mapping.filter) && filter(record, this.$chainer.val());
+      };
+
+      SelectChain.prototype._custom_build_option = function(record) {
+        var build_option;
+        return (build_option = this.settings.ajax_mapping.build_option) && build_option(record);
+      };
+
+      SelectChain.prototype._default_build_option = function(record) {
+        var mapping;
         return (mapping = this.settings.ajax_mapping) && this.$chainee.append(this._build_option(record[mapping.text], record[mapping.value]));
       };
 
