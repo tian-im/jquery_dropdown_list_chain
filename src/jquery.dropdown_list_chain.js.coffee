@@ -84,7 +84,6 @@ jQuery ($) ->
     reload: -> # on chainer: to reload chainee options
       @_cleanup_chainee_options()
       (ajax_settings = @_load_ajax_settings()) and @_load_options_from_remote_with(ajax_settings) or @_load_options_from_local()
-      @_load_last_selected()
 
     # private
     _chain_them_together: -> # by force
@@ -105,6 +104,7 @@ jQuery ($) ->
 
     _load_options_from_local: ->
       @$chainee.append @$clone.find("option[data-chain='#{ @$chainer.val() }']").clone() if @$clone
+      @_load_last_selected()
 
     # ajax
     _load_ajax_settings: ->
@@ -112,8 +112,10 @@ jQuery ($) ->
 
     _load_options_from_remote_with: (ajax_settings) ->
       process = $.proxy @_map_each_record, @
+      after_process = $.proxy @_load_last_selected, @
       $.ajax(ajax_settings).done (data, textStatus, jqXHR) ->
         $.each data, process
+        after_process()
 
     _map_each_record: (index, record) ->
       return if @_filter(record)

@@ -112,8 +112,7 @@
       SelectChain.prototype.reload = function() {
         var ajax_settings;
         this._cleanup_chainee_options();
-        (ajax_settings = this._load_ajax_settings()) && this._load_options_from_remote_with(ajax_settings) || this._load_options_from_local();
-        return this._load_last_selected();
+        return (ajax_settings = this._load_ajax_settings()) && this._load_options_from_remote_with(ajax_settings) || this._load_options_from_local();
       };
 
       SelectChain.prototype._chain_them_together = function() {
@@ -146,8 +145,9 @@
 
       SelectChain.prototype._load_options_from_local = function() {
         if (this.$clone) {
-          return this.$chainee.append(this.$clone.find("option[data-chain='" + (this.$chainer.val()) + "']").clone());
+          this.$chainee.append(this.$clone.find("option[data-chain='" + (this.$chainer.val()) + "']").clone());
         }
+        return this._load_last_selected();
       };
 
       SelectChain.prototype._load_ajax_settings = function() {
@@ -158,10 +158,12 @@
       };
 
       SelectChain.prototype._load_options_from_remote_with = function(ajax_settings) {
-        var process;
+        var after_process, process;
         process = $.proxy(this._map_each_record, this);
+        after_process = $.proxy(this._load_last_selected, this);
         return $.ajax(ajax_settings).done(function(data, textStatus, jqXHR) {
-          return $.each(data, process);
+          $.each(data, process);
+          return after_process();
         });
       };
 
