@@ -1,4 +1,8 @@
 - # helpers
+- css = lambda do |css_url|
+  %link{ type: 'text/css', rel: 'stylesheet', href: css_url }
+- js = lambda do |js_url|
+  %script{ type: 'text/javascript', src: js_url }
 - codes = lambda do |lines_of_code, lang = 'lang-html'|
   %pre{ class: "prettyprint linenums #{ lang }" }
     :preserve
@@ -7,10 +11,17 @@
 %html
   %head
     %title Demo
-    - %w( http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css http://twitter.github.com/bootstrap/assets/css/bootstrap.css http://twitter.github.com/bootstrap/assets/css/docs.css http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css examples/demo.css ).each do |css_url|
-      %link{ type: 'text/css', rel: 'stylesheet', href: css_url }
-    - %w( http://tian.im/javascripts/google_analytics.js http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js http://twitter.github.com/bootstrap/assets/js/bootstrap-scrollspy.js http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.js src/jquery.dropdown_list_chain.js examples/demo.js ).each do |js_url|
-      %script{ type: 'text/javascript', src: js_url }
+    - css.call 'http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css'
+    - css.call 'http://twitter.github.com/bootstrap/assets/css/bootstrap.css'
+    - css.call 'http://twitter.github.com/bootstrap/assets/css/docs.css'
+    - css.call 'http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css'
+    - css.call 'examples/demo.css'
+    - js.call 'http://tian.im/javascripts/google_analytics.js'
+    - js.call 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'
+    - js.call 'http://twitter.github.com/bootstrap/assets/js/bootstrap-scrollspy.js'
+    - js.call 'http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.js'
+    - js.call 'src/jquery.dropdown_list_chain.js'
+    - js.call 'examples/demo.js'
     / TODO: add more info for SEO
     %meta
   %body{ 'data-spy' => 'scroll', 'data-target' => 'div.subnav', 'data-offset' => 70 }
