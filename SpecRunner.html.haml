@@ -8,15 +8,16 @@
   %head
     %title Jasmine Spec Runner
     %link{ href: 'https://github.com/pivotal/jasmine/raw/master/images/jasmine_favicon.png', rel: 'shortcut icon', type: 'image/png' }
-    - css.call 'https://github.com/pivotal/jasmine/raw/master/lib/jasmine-core/jasmine.css'
-    - js.call 'https://github.com/pivotal/jasmine/raw/master/lib/jasmine-core/jasmine.js'
-    - js.call 'https://github.com/pivotal/jasmine/raw/master/lib/jasmine-core/jasmine-html.js'
+    - css.call 'lib/jasmine-jquery/vendor/jasmine/jasmine.css'
+    - js.call 'lib/jasmine-jquery/vendor/jasmine/jasmine.js'
+    - js.call 'lib/jasmine-jquery/vendor/jasmine/jasmine-html.js'
     
     - js.call 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'
     / include source files here...
     - js.call 'src/jquery.dropdown_list_chain.js'
     
     / include spec files here...
-    - js.call 'https://raw.github.com/velesin/jasmine-jquery/master/lib/jasmine-jquery.js'
+    - js.call 'lib/jasmine-jquery/lib/jasmine-jquery.js'
     - js.call 'spec/javascripts/jquery.dropdown_list_chain_spec.js'
+    - js.call 'spec/init.js'
   %body
