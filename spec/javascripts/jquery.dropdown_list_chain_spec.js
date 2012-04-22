@@ -38,11 +38,70 @@
             return expect(select_chain.$chainee).not.toEqual(select_chain.$clone);
           });
         });
+        describe(".update_last_selected", function() {
+          beforeEach(function() {
+            select_chain.$chainer.val('InputValue');
+            return select_chain.$chainee.append(select_chain._build_option('Text', 'Key'));
+          });
+          it("should remember the last value", function() {
+            expect(select_chain.update_last_selected()).toBeUndefined();
+            return expect($.isEmptyObject(select_chain.last_selected)).toBeTruthy();
+          });
+          return it("should clean up the options for chaineet and append blank option", function() {
+            select_chain.settings = {
+              remember_last_value: true
+            };
+            expect(select_chain.update_last_selected()).not.toBeUndefined();
+            return expect(select_chain.last_selected['InputValue']).toEqual('Key');
+          });
+        });
+        describe(".update", function() {});
+        describe(".reload", function() {});
         describe("._chain_them_together", function() {
           return it("should enforce to chain two elements together", function() {
             expect(select_chain.$chainer).toBe('[id]');
             expect(select_chain.$chainee).toBe('[data-toggle=chain][data-target]');
             return expect(select_chain.$chainee.data('target').substring(1)).toEqual(select_chain.$chainer.attr('id'));
+          });
+        });
+        describe("._cleanup_chainee_options", function() {
+          it("should clean up the options for chaineet and not append blank option as settings specify", function() {
+            expect(select_chain._cleanup_chainee_options()).toBeUndefined();
+            return expect(select_chain.$chainee).not.toContain('option');
+          });
+          return it("should clean up the options for chaineet and append blank option", function() {
+            var $option;
+            select_chain.settings = {
+              include_blank: {
+                text: '- select -',
+                value: '-'
+              }
+            };
+            expect(select_chain._cleanup_chainee_options()).not.toBeUndefined();
+            $option = select_chain.$chainee.children();
+            expect($option.length).toBe(1);
+            expect($option).toBe('option');
+            expect($option).toHaveAttr('value', '-');
+            return expect($option).toHaveText('- select -');
+          });
+        });
+        describe("._load_last_selected ", function() {
+          beforeEach(function() {
+            select_chain.$chainer.val('InputValue');
+            select_chain.$chainee.append(select_chain._build_option('-', '-'));
+            select_chain.$chainee.append(select_chain._build_option('Text', 'Key'));
+            return select_chain.last_selected['InputValue'] = 'Key';
+          });
+          it("should not load the last selected value for the dropdown list", function() {
+            expect(select_chain._load_last_selected()).toBeUndefined();
+            return expect(select_chain.$chainee.val()).toEqual('-');
+          });
+          return it("should load the last selected value for the dropdown list", function() {
+            select_chain.settings = {
+              remember_last_value: true
+            };
+            expect(select_chain._load_last_selected()).not.toBeUndefined();
+            return expect(select_chain.$chainee.val()).toEqual('Key');
           });
         });
         describe("._build_option", function() {
@@ -54,126 +113,30 @@
             return expect($option).toHaveText('Sydney');
           });
         });
-        describe("._cleanup_chainee_options", function() {
-          it("should clean up the options for chaineet and not append blank option as settings specify", function() {
-            select_chain._cleanup_chainee_options();
-            return expect(select_chain.$chainee).not.toContain('option');
-          });
-          return it("should clean up the options for chaineet and append blank option", function() {
-            var $option;
-            select_chain.settings = {
-              include_blank: {
-                text: '- select -',
-                value: '-'
-              }
-            };
-            select_chain._cleanup_chainee_options();
-            $option = select_chain.$chainee.children();
-            expect($option.length).toBe(1);
-            expect($option).toBe('option');
-            expect($option).toHaveAttr('value', '-');
-            return expect($option).toHaveText('- select -');
-          });
-        });
-        describe(".update_last_selected ", function() {
+        return describe("._load_options_from_local", function() {
           beforeEach(function() {
             select_chain.$chainer.val('InputValue');
-            return select_chain.$chainee.append(select_chain._build_option('Value', 'Key'));
+            select_chain.$chainee.append(select_chain._build_option('Text1', 'Key1').attr('data-chain', 'OtherValue'));
+            select_chain.$chainee.append(select_chain._build_option('Text2', 'Key2').attr('data-chain', 'InputValue'));
+            select_chain.$chainee.append(select_chain._build_option('Text3', 'Key3').attr('data-chain', 'InputValue'));
+            select_chain.last_selected['InputValue'] = 'Key3';
+            select_chain.$clone = select_chain.$chainee.clone();
+            return select_chain._cleanup_chainee_options();
           });
-          it("should remember the last value", function() {
-            select_chain.update_last_selected();
-            return expect($.isEmptyObject(select_chain.last_selected)).toBeTruthy();
+          it("should load the options locally from the clone chainee object", function() {
+            select_chain._load_options_from_local();
+            expect(select_chain.$chainee.children().length).toEqual(2);
+            return expect(select_chain.$chainee.val()).toEqual('Key2');
           });
-          return it("should clean up the options for chaineet and append blank option", function() {
+          return it("should load the options locally from the clone chainee object", function() {
             select_chain.settings = {
               remember_last_value: true
             };
-            select_chain.update_last_selected();
-            return expect(select_chain.last_selected['InputValue']).toEqual('Key');
+            select_chain._load_options_from_local();
+            expect(select_chain.$chainee.children().length).toEqual(2);
+            return expect(select_chain.$chainee.val()).toEqual('Key3');
           });
         });
-        return describe(".update_last_selected ", function() {
-          it("should remember the last value", function() {});
-          return it("should clean up the options for chaineet and append blank option", function() {});
-        });
-        /*
-              it "should NOT be blank", ->
-                expect($.InFieldLabel.is_blank "not empty string").toBeFalsy()
-                expect($.InFieldLabel.is_blank $(document.body)).toBeFalsy()
-                
-            describe "#find_data_options_for", ->
-              it "should return blank options", ->
-                $input = $ '<input />'
-                expect($.InFieldLabel.find_data_options_for $input).toBeEmptyHash()
-                
-              it "should return options for in-field label only", ->
-                $input = $ '<input data-align="right"/>'
-                expect(($.InFieldLabel.find_data_options_for $input).align).toEqual('right')
-                
-            describe "#append_input_after_label", ->
-              it "should move and append the input after the label", ->
-                setFixtures '<label for="address_field">Address: <input id="address_field" type="text" /></label>'
-                $label = $ 'label', $('#jasmine-fixtures')
-                $input = $ 'input', $('#jasmine-fixtures')
-                expect($label).toBe('[for]:has(input)')
-                $.InFieldLabel.append_input_after_label $input, $label
-                expect($label).not.toBe('[for]:has(input)')
-                expect($label.next()).toBe("input[id=#{$label.attr 'for'}]")
-        
-              it "should move and append the input after the label, add attribute 'id' to input and 'for' to label in order to link them up", ->
-                setFixtures '<label>Email: <input type="text" /></label>'
-                $label = $ 'label', $('#jasmine-fixtures')
-                $input = $ 'input', $('#jasmine-fixtures')
-                expect($label).toBe(':not([for]):has(input)')
-                $.InFieldLabel.append_input_after_label $input, $label
-                expect($label).not.toBe(':has(input)')
-                expect($input).toBe('[id]')
-                expect($label.next()).toBe("input[id=#{$label.attr 'for'}]")
-        
-            describe "#reposition_label_to_front_of_input", ->
-              it "should reposition the lable to the front and by default align to the left of the input", ->
-                $label = $ '<label for="address_field">Address:</label>'
-                $input = $ '<input id="address_field" type="text" />'
-                $.InFieldLabel.reposition_label_to_front_of_input $label, $input, {align: 'right'}
-                expect($label.css 'position').toEqual('absolute')
-                expect($label.css 'cursor').toEqual('text')
-        
-            describe ".setup", ->
-              it "should setup for input which is outside of associated label", ->
-                setFixtures '<label for="address_field">Address:</label><input id="address_field" type="text" value="sydney" />'
-                $label = $ 'label', $('#jasmine-fixtures')
-                $input = $ 'input', $('#jasmine-fixtures')
-                $input.in_field_label()
-                expect($input.data 'in_field_label_status').toEqual('all_set')
-                expect($input).toHandle('keyup')
-                expect($input).toHandle('focus')
-                expect($input).toHandle('blur')
-                expect($input).toHaveClass('in_field_label_class')
-                expect($label).toHaveClass('in_field_label_class')
-                expect($label.css 'opacity').toEqual('0')
-        
-              it "should setup for input which is inside of a label", ->
-                setFixtures '<label>Address: <input type="text" value="sydney" /></label>'
-                $label = $ 'label', $('#jasmine-fixtures')
-                $input = $ 'input', $('#jasmine-fixtures')
-                $input.in_field_label()
-                expect($input.data 'in_field_label_status').toEqual('all_set')
-                expect($input).toBe('[id]')
-                expect($label.next()).toBe("input[id=#{$label.attr 'for'}]")
-                expect($input).toHandle('keyup')
-                expect($input).toHandle('focus')
-                expect($input).toHandle('blur')
-                expect($input).toHaveClass('in_field_label_class')
-                expect($label).toHaveClass('in_field_label_class')
-                expect($label.css 'opacity').toEqual('0')
-        
-              it "should not setup for input which has no associated label", ->
-                setFixtures '<input id="address_field" type="text" value="sydney" />'
-                $input = $ 'input', $('#jasmine-fixtures')
-                $input.in_field_label()
-                expect($input.data 'in_field_label_status').not.toEqual('all_set')
-                expect($input).not.toHaveClass('in_field_label_class')
-        */
       });
     });
   });
