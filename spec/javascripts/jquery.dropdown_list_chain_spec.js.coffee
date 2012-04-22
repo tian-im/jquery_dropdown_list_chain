@@ -1,17 +1,87 @@
 jQuery ($) ->
   describe "SelectChain", ->
-		describe "#is_select", ->
-      it "should say yes if element is select", ->
-        expect($.SelectChain.is_select $('<select />').get(0)).toBeTruthy()
-        expect($.SelectChain.is_select $('<select />')).toBeTruthy()
+    describe "class methods", ->
+      describe "#get_element", ->
+        it "should return only element", ->
+          expect($.SelectChain.get_element $('<select />')).toBeTypeOf Element
+          expect($.SelectChain.get_element document.createElement('select')).toBeTypeOf Element
 
+        it "should return null", ->
+          expect($.SelectChain.get_element 'string').toBeNull()
+          expect($.SelectChain.get_element 1).toBeNull()
 
-      it "should say no unless element is select", ->
-        expect($.SelectChain.is_select $('<input />').get(0)).toBeFalsy()
-        expect($.SelectChain.is_select {}).toBeFalsy()
+      describe "#is_select", ->
+        it "should say yes if element is select", ->
+          expect($.SelectChain.is_select $('<select />').get(0)).toBeTruthy()
+          expect($.SelectChain.is_select $('<select />')).toBeTruthy()
 
-    describe ".build_option", ->
-      it "should"
+        it "should say no unless element is select", ->
+          expect($.SelectChain.is_select $('<input />').get(0)).toBeFalsy()
+          expect($.SelectChain.is_select $('<input />')).toBeFalsy()
+          expect($.SelectChain.is_select {}).toBeFalsy()
+          expect($.SelectChain.is_select undefined).toBeFalsy()
+
+    describe "instance methods", ->
+      beforeEach ->
+        window.select_chain = new $.SelectChain($('<input />'), $('<select></select>'))
+        select_chain.settings = {}
+
+      describe ".constructor", ->
+        it "should have chainer and chainee set", ->
+          expect(select_chain.$chainer).not.toBeNull()
+          expect(select_chain.$chainee).not.toBeNull()
+          expect(select_chain.$chainee).not.toEqual select_chain.$clone
+
+      describe "._chain_them_together", ->
+        it "should enforce to chain two elements together", ->
+          expect(select_chain.$chainer).toBe '[id]'
+          expect(select_chain.$chainee).toBe '[data-toggle=chain][data-target]'
+          expect(select_chain.$chainee.data('target').substring 1).toEqual select_chain.$chainer.attr('id')
+
+      describe "._build_option", ->
+        it "should return an option element with the specified text and value", ->
+          $option = select_chain._build_option 'Sydney', 'syd'
+          expect($option).toBe 'option'
+          expect($option).toHaveAttr 'value', 'syd'
+          expect($option).toHaveText 'Sydney'
+
+      describe "._cleanup_chainee_options", ->
+        it "should clean up the options for chaineet and not append blank option as settings specify", ->
+          select_chain._cleanup_chainee_options()
+          expect(select_chain.$chainee).not.toContain 'option'
+
+        it "should clean up the options for chaineet and append blank option", ->
+          select_chain.settings = 
+            include_blank:
+              text: '- select -'
+              value: '-'
+          select_chain._cleanup_chainee_options()
+          $option = select_chain.$chainee.children()
+          expect($option.length).toBe 1
+          expect($option).toBe 'option'
+          expect($option).toHaveAttr 'value', '-'
+          expect($option).toHaveText '- select -'
+
+      describe ".update_last_selected ", ->
+        beforeEach ->
+          select_chain.$chainer.val 'InputValue'
+          select_chain.$chainee.append select_chain._build_option('Value', 'Key')
+
+        it "should remember the last value", ->
+          select_chain.update_last_selected()
+          expect($.isEmptyObject(select_chain.last_selected)).toBeTruthy()
+
+        it "should clean up the options for chaineet and append blank option", ->
+          select_chain.settings = 
+            remember_last_value: true
+          select_chain.update_last_selected()
+          expect(select_chain.last_selected['InputValue']).toEqual 'Key'
+
+      describe ".update_last_selected ", ->
+        it "should remember the last value", ->
+
+        it "should clean up the options for chaineet and append blank option", ->
+
       ###
       it "should NOT be blank", ->
         expect($.InFieldLabel.is_blank "not empty string").toBeFalsy()
